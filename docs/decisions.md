@@ -229,3 +229,18 @@ reported as an advisory note rather than a failure. The substantive checks — a
 recognised entry with a status, a date, a registered source, and a rationale —
 stay hard. This is the fitness-function rule applied to the standard itself:
 keep the check, widen the accepted evidence.
+
+## Decision: Publish the standard as a public repository
+
+- ID: D14
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://agentskills.io/specification
+- Recheck: if adoption is better served by distributing the standard inside an existing repository
+
+Rationale: A standard that lives only on one machine is a personal synthesis;
+its generality can be tested only where another person can adopt it. Publishing
+gives the standard the stable URL, the public conformance claim, and the shared
+history the anti-rot core assumes, and it matches how the format it builds on is
+distributed — a canonical document plus a bundled validator in a public
+repository. Detection stays local; publication only widens who can run it.

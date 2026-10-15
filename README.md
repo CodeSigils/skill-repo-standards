@@ -52,6 +52,7 @@ not run.
 │       └── ci.yml
 ├── .gitignore
 ├── AGENTS.md
+├── CONFORMANCE.md
 ├── LICENSE
 ├── README.md
 ├── SECURITY.md
@@ -99,7 +100,8 @@ when a control's failure mode is not present.
 A grade claim is an assertion until a passing check evidences it. A repository
 that wants the claim to be durable may record it in a short `CONFORMANCE.md`
 naming the claimed grade, the `STANDARD.md` version it was checked against, and
-the date of the check.
+the date of the check. This repository's own claim is in
+[`CONFORMANCE.md`](CONFORMANCE.md).
 
 ## License
 

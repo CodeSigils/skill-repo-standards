@@ -20,6 +20,7 @@ that the underlying source has not changed since.
 | R-008 | Which licence and change-record conventions apply when a standard is published for others to implement | Complete | 2026-10-15 | D9, D10 |
 | R-009 | Whether a shared standard should grade its validator findings by severity so a deliberately different repository can adopt it | Complete | 2026-10-15 | D12 |
 | R-010 | Whether the standard should hard-encode one shape of a decision log, a research register, or a skill payload | Complete | 2026-10-15 | D13 |
+| R-011 | Whether a shared standard should be published as a standalone public repository so others can adopt it by copy | Complete | 2026-10-15 | D14 |
 
 ## R-001 — Specification plus validator
 
@@ -146,3 +147,14 @@ rather than a hard failure. With these changes eleven of the twelve repositories
 adopt cleanly or with advisory notes, and the one remaining failure is the
 genuine missing `SECURITY.md`. Sources: https://agentskills.io/specification ,
 https://continuous-architecture.org/practices/fitness-functions
+
+## R-011 — Publishing the standard
+
+Whether a shared standard should be published as a standalone public repository,
+so that a repository that did not help write it can adopt the same document and
+validator by copy. A local-only standard cannot be tested for generality: the
+only evidence that it serves others is another person adopting it. The format it
+builds on is distributed exactly this way — a canonical specification plus a
+bundled validator in a public repository — and the adoption survey in R-010 is
+the first evidence that the standard transfers beyond the repositories that
+inspired it. Enables D14. Sources: https://agentskills.io/specification
