@@ -1,0 +1,54 @@
+# Dependabot configuration for skill-repo-standards.
+#
+# Only one ecosystem is listed. This repository has no third-party Python
+# dependencies — three stdlib-only scripts run as `python3 scripts/...` — so a
+# `uv` or `pip` entry would have nothing to update.
+#
+# The reason this file exists at all is that Actions are pinned to full commit
+# SHAs. A SHA never rots on its own: nothing warns when the tag moves, so a
+# pinned action can sit on a stale commit indefinitely. Dependabot is the
+# control that closes that failure mode, and it is the only one of the standard's
+# optional controls whose failure mode this repository already has.
+#
+# The shape follows the fleet convention (see repo-architecture-skill,
+# docs/research/automation-bots-and-workflows.md): weekly, grouped, capped at two
+# open pull requests, and no auto-merge of any kind.
+version: 2
+
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Bounds concurrent open pull requests, not the rate they arrive: once the
+    # cap is reached Dependabot opens nothing further and re-evaluates on the
+    # next run, so no backlog accumulates.
+    open-pull-requests-limit: 2
+    commit-message:
+      # Dependabot derives the pull-request title from the commit message. A
+      # prefix keeps those titles recognizable next to the repository's own
+      # conventional subjects.
+      prefix: "chore(deps)"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    groups:
+      # Minor and patch updates arrive together, so a routine week costs one
+      # review instead of several.
+      actions-maintenance:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      # A major bump of a SHA-pinned action is a migration, not maintenance: it
+      # can change inputs, outputs, or the runner it needs, and the pin exists
+      # precisely to make that a deliberate decision. Major updates are therefore
+      # taken on purpose, not as a weekly routine.
+      - dependency-name: "actions/checkout"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "actions/setup-python"
+        update-types:
+          - "version-update:semver-major"

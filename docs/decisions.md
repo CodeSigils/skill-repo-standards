@@ -318,3 +318,29 @@ new status such as 404 was reported as an environmental could-not-run (exit 2)
 instead of drift (exit 1), and a malformed manifest printed failures yet exited 0.
 A check must fail on the condition it names and must not soften a definite finding
 into "could not check"; both are now fixed.
+
+## Decision: Adopt a github-actions Dependabot entry and decline uv
+
+- ID: D19
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference , https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/optimizing-pr-creation-version-updates , https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-on-actions , https://github.com/CodeSigils/repo-architecture-skill
+- Recheck: if a second ecosystem gains a dependency, or Dependabot stops rewriting SHA pins
+
+Rationale: Actions are pinned to full commit SHAs, and a SHA never rots on its own
+— nothing warns that the tag moved — so the repository already has the failure mode
+Dependabot closes. The entry is `github-actions` only, weekly, grouped minor and
+patch, capped at two open pull requests, with auto-merge of every kind disabled and
+a major bump of a pinned action ignored so it is taken deliberately. The shape and
+its reasoning are taken from the fleet note
+`repo-architecture-skill/docs/research/automation-bots-and-workflows.md`, which is
+cited as a source rather than re-derived. `uv` and Python dependencies are
+declined, not deferred: this repository has zero third-party dependencies and three
+stdlib-only scripts, so a package manager, lockfile, linter, type checker, their
+pre-commit wiring, a second SHA-pinned Action in CI, and a weekly stream of
+tooling pull requests would all be cost with nothing to act on. `cooldown` is
+deliberately not configured — a three-day cooldown already applies by default, so
+adding the knob would be a control with no failure mode. One consequence is
+recorded rather than hidden: Dependabot commits do not follow this repository's
+commit contract, and the local `commit-msg` hook cannot enforce anything on a bot,
+so a merged Dependabot commit is an accepted exception.

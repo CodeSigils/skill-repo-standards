@@ -50,6 +50,12 @@ Last reviewed: 2026-10-15.
   breach stays hard. A survey of twelve sibling repositories found eleven adopt
   cleanly or with advisory notes, leaving one genuine gap (a minimal repository
   with no `SECURITY.md`). (checked 2026-10-15)
+- One control adopted against a named failure mode: a `github-actions` Dependabot
+  entry. Actions are pinned to full commit SHAs, and a SHA never rots on its own,
+  so nothing would report a stale pin. Weekly, grouped (minor and patch), capped at
+  two open pull requests, no auto-merge, and a major bump of a pinned action is
+  ignored so it is taken deliberately rather than as routine. `uv` and Python
+  dependencies are declined: this repository has none. (checked 2026-10-15)
 - Grade C: controls a repository has individually justified against a named
   failure mode. (checked 2026-10-15)
 

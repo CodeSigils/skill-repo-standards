@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 1.3 (draft).** This document is the single normative source for the
+**Version 1.4 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -72,6 +72,12 @@ check. A claim with no passing check is an assertion, not evidence.
 6. **Pinned, least-privilege automation.** GitHub Actions are pinned to full
    40-character commit SHAs, every checkout sets `persist-credentials: false`,
    and each job declares the smallest `permissions` it needs.
+
+   Pinning by SHA makes an Action immutable and also lets it go stale in silence,
+   so a repository that pins has an update obligation: something must report that
+   the tag moved. This is not a requirement and no grade depends on it — but the
+   obligation exists whether or not it is met, and a repository that pins without
+   meeting it should know that.
 
 ## The anti-rot core (Grade B)
 

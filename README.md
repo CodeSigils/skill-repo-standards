@@ -71,6 +71,7 @@ not run.
 │   ├── pre-commit
 │   └── pre-push
 ├── .github
+│   ├── dependabot.yml
 │   └── workflows
 │       └── ci.yml
 ├── .gitignore

@@ -25,6 +25,7 @@ that the underlying source has not changed since.
 | R-013 | Whether a verification-command list duplicated across the README, the hooks, and CI warrants a shared manifest now | Complete | 2026-10-15 | D16 |
 | R-014 | Whether the standard should explain its relationship to the established practice families and publish a next-steps list | Complete | 2026-10-15 | D17 |
 | R-015 | Whether a gate can be added to a hook or workflow without the README documenting it, and whether a definite HTTP status must not be mistaken for an environmental failure | Complete | 2026-10-15 | D18 |
+| R-016 | Whether a repository that pins Actions by SHA should adopt Dependabot, and whether it should adopt uv and Python dependencies | Complete | 2026-10-15 | D19 |
 
 ## R-001 — Specification plus validator
 
@@ -213,3 +214,40 @@ check, and classifying a definite HTTP status as drift rather than as an
 environmental error. Recorded as the basis for the cross-surface check and the
 `HTTPError`-aware URL verifier.
 Sources: https://continuous-architecture.org/practices/fitness-functions
+
+## R-016 — Dependabot, and why uv is declined
+
+Pinning an Action to a full commit SHA is what makes it immutable, and it is also
+what makes it go stale in silence: nothing in the repository reports that the tag
+moved. That is a named failure mode the repository already has, so it is the one
+optional control worth adopting here. The shape is taken from the fleet's own
+research note, `repo-architecture-skill/docs/research/automation-bots-and-workflows.md`
+(reviewed 2026-09-08): `github-actions` only, weekly, grouped minor and patch,
+capped at two open pull requests, no auto-merge, and major updates taken
+deliberately.
+
+That note also records a subtlety worth keeping. The official documentation says a
+dependency joins the *first* group it matches; the note states that the updater
+implements *most-specific*-match. Its disjoint `update-types` design makes the two
+readings indistinguishable, which is more robust than relying on either one. It
+also records why `exclude-patterns` is unused: excluding a dependency from a group
+does not skip it — it becomes an ungrouped pull request, including for majors,
+which increases review load rather than reducing it.
+
+Two facts postdate that note (2026-09-08). `cooldown` now applies a default
+three-day cooldown to version updates even when unconfigured, and it does not apply
+to security updates; its support for the `github-actions` ecosystem could not be
+confirmed from the fetched documentation, so it is not used. And
+`open-pull-requests-limit: 0` disables version updates for an ecosystem, which is
+the documented way to take security updates only. A separate documentation
+contradiction — whether a fixed limit applies to security-update pull requests —
+is unresolved upstream and does not affect this configuration.
+
+`uv` and Python dependencies are declined rather than deferred. They would add a
+package manager, a lockfile, a linter and type checker, their pre-commit wiring, a
+second SHA-pinned action in CI, and a weekly stream of tooling pull requests — to a
+repository whose three scripts import only the standard library and have nothing to
+install. A type checker would not have caught the two real defects a review found
+here (an exception-hierarchy bug and a control-flow bug), so the control fails the
+standard's own proportionality rule.
+Sources: https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference , https://github.com/CodeSigils/repo-architecture-skill

@@ -46,6 +46,15 @@ which files to update and which source to register. A change to this standard's
 own version or status follows the `## Standard lifecycle` section there. Do not
 restate either here.
 
+## Dependabot
+
+Dependabot opens `github-actions` version updates weekly, grouped and capped by
+`.github/dependabot.yml`. Merge one only after the canonical gate passes: read
+the diff, then confirm the checks are green. Never enable auto-merge. A
+Dependabot commit does not satisfy the commit contract below, and the local
+`commit-msg` hook cannot enforce anything on a bot; that exception is recorded
+in `docs/decisions.md` D19 rather than left implicit.
+
 ## Commit contract
 
 Use `type[(scope)]: verb — rationale` for the subject, then a body with a

@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "description": "Machine-readable evidence index. Every source cited by a decision is registered here with a verification date. scripts/verify_urls.py checks each entry's HTTP status and required text; scripts/standards_check.py requires that every decision source is registered.",
   "urls": [
     {
@@ -196,6 +196,49 @@
       "required_text": ["change"],
       "source_section": "docs/decisions.md",
       "domain_tag": "specification-lifecycle",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Dependabot configuration options reference",
+      "url": "https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference",
+      "expected_statuses": [200],
+      "required_text": ["package-ecosystem"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "dependency-automation",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Dependabot pull-request grouping",
+      "url": "https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/optimizing-pr-creation-version-updates",
+      "expected_statuses": [200],
+      "required_text": ["groups"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "dependency-automation",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Dependabot on GitHub Actions",
+      "url": "https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-on-actions",
+      "expected_statuses": [200],
+      "required_text": ["github-actions"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "dependency-automation",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Automation bots and workflow boundaries",
+      "url": "https://github.com/CodeSigils/repo-architecture-skill",
+      "expected_statuses": [200],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "dependency-automation",
       "source_type": "community",
       "status": "active",
       "last_verified": "2026-10-15"
