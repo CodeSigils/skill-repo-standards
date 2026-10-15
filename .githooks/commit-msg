@@ -1,0 +1,5 @@
+#!/bin/sh
+# Enforce the commit message contract on the message git is about to record.
+set -eu
+
+python3 scripts/check_commit_messages.py "$1"

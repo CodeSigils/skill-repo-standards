@@ -1,0 +1,204 @@
+{
+  "version": 3,
+  "description": "Machine-readable evidence index. Every source cited by a decision is registered here with a verification date. scripts/verify_urls.py checks each entry's HTTP status and required text; scripts/standards_check.py requires that every decision source is registered.",
+  "urls": [
+    {
+      "name": "Agent Skills specification",
+      "url": "https://agentskills.io/specification",
+      "expected_statuses": [200],
+      "required_text": ["SKILL.md"],
+      "source_section": "STANDARD.md",
+      "domain_tag": "skill-format",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Agent Skills authoring best practices",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+      "expected_statuses": [200],
+      "required_text": ["description"],
+      "source_section": "STANDARD.md",
+      "domain_tag": "skill-format",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "AGENTS.md format",
+      "url": "https://agents.md/",
+      "expected_statuses": [200],
+      "required_text": ["AGENTS.md"],
+      "source_section": "STANDARD.md",
+      "domain_tag": "agent-discoverability",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "llms.txt proposal",
+      "url": "https://llmstxt.org/",
+      "expected_statuses": [200],
+      "required_text": ["llms.txt"],
+      "source_section": "STANDARD.md",
+      "domain_tag": "agent-discoverability",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "MADR decision record template",
+      "url": "https://adr.github.io/madr/",
+      "expected_statuses": [200],
+      "required_text": ["Decision"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "decision-records",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "AWS architectural decision records best practices",
+      "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/best-practices.html",
+      "expected_statuses": [200],
+      "required_text": ["decision"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "decision-records",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "log4brains decision log tooling",
+      "url": "https://github.com/thomvaill/log4brains",
+      "expected_statuses": [200],
+      "required_text": ["log4brains"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "decision-records",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "artel documentation drift guidance",
+      "url": "https://artel.run/docs/documentation/",
+      "expected_statuses": [200],
+      "required_text": ["documentation"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "documentation-freshness",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Documentation checks in CI",
+      "url": "https://datadef.io/guides/en/docs-checks-in-ci",
+      "expected_statuses": [200],
+      "required_text": ["CI"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "documentation-freshness",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Thally provenance and drift checks",
+      "url": "https://docs.thally.io/guides/provenance",
+      "expected_statuses": [200],
+      "required_text": ["provenance"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "documentation-freshness",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "docfresh documentation freshness tool",
+      "url": "https://github.com/os-tack/docfresh",
+      "expected_statuses": [200],
+      "required_text": ["docfresh"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "documentation-freshness",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Awesome Agent Memory catalog",
+      "url": "https://github.com/AgentMemoryWorld/Awesome-Agent-Memory",
+      "expected_statuses": [200],
+      "required_text": ["memory"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "agent-memory",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Fitness functions for architecture governance",
+      "url": "https://continuous-architecture.org/practices/fitness-functions",
+      "expected_statuses": [200],
+      "required_text": ["fitness function"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "executable-governance",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Open Manuscript Initiative specification lifecycle",
+      "url": "https://www.openmanuscript.org/docs/governance/specification-lifecycle",
+      "expected_statuses": [200],
+      "required_text": ["lifecycle"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "specification-lifecycle",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "OpenTide specification governance",
+      "url": "https://opentide.org/docs/specifications/GOVERNANCE",
+      "expected_statuses": [200],
+      "required_text": ["specification"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "specification-governance",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "W3C QA implementation conformance statement guidelines",
+      "url": "https://www.w3.org/TR/qaframe-spec/specgl-ics.html",
+      "expected_statuses": [200],
+      "required_text": ["conformance"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "conformance",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Linux Foundation license best practices",
+      "url": "https://www.linuxfoundation.org/licensebestpractices",
+      "expected_statuses": [200],
+      "required_text": ["license"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "licensing",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "TIDES specification change management",
+      "url": "https://github.com/TIDES-transit/TIDES",
+      "expected_statuses": [200],
+      "required_text": ["change"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "specification-lifecycle",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    }
+  ]
+}

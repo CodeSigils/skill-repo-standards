@@ -1,0 +1,6 @@
+#!/bin/sh
+# Validate the standard's machine-checkable parts before a commit lands.
+set -eu
+
+python3 scripts/standards_check.py --self-test
+python3 scripts/standards_check.py
