@@ -5,7 +5,11 @@ Checks the machine-checkable parts of STANDARD.md. It detects drift in fields,
 dates, and boundaries; it never judges whether prose is true.
 
 Usage:
-    python3 scripts/standards_check.py [TARGET] [--max-age-days N] [--self-test]
+    python3 scripts/standards_check.py [TARGET] [--max-age-days N] [--strict] [--self-test]
+
+Findings carry a severity. A **hard** finding fails the check. A **soft** finding
+is advisory: it marks a rule a repository may adopt incrementally, and it does
+not change the exit code unless `--strict` is given.
 
 Exit codes follow the local check contract: 0 clean, 1 findings, 2 could not run.
 """
@@ -21,8 +25,29 @@ import sys
 import tempfile
 from pathlib import Path
 
+HARD = "hard"
+SOFT = "soft"
+
+# A finding is (severity, message). Hard findings fail the check; soft findings
+# are advisory and only fail when the check runs in strict mode.
+Finding = tuple[str, str]
+
+
+def hard(message: str) -> Finding:
+    """Mark a finding as a hard failure."""
+    return (HARD, message)
+
+
+def soft(message: str) -> Finding:
+    """Mark a finding as advisory (does not fail unless strict)."""
+    return (SOFT, message)
+
+
 ALLOWED_STATUSES = ("proposed", "accepted", "deprecated", "superseded", "rejected")
-DECISION_HEADING_RE = re.compile(r"(?m)^## Decision: (?P<title>.+?)\s*$")
+# Accept the common ADR heading shapes, not one exact wording (regex below).
+DECISION_HEADING_RE = re.compile(
+    r"(?m)^#{2,3}[ \t]+(?P<kind>Decision|ADR[-\s]*\d*|D\d+)\b[:\s\u2014-]*(?P<title>.*?)\s*$"
+)
 DECISION_ID_RE = re.compile(r"^D\d+$")
 RESEARCH_ROW_RE = re.compile(
     r"(?m)^\|\s*(?P<id>R-\d+)\s*\|(?P<concern>[^|]*)\|(?P<status>[^|]*)\|"
@@ -32,7 +57,9 @@ RESEARCH_BODY_RE = re.compile(r"(?m)^##\s+(?P<id>R-\d+)\b")
 URL_RE = re.compile(r"https?://[^\s)>\]`'\"]+")
 REL_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 SPINE_FILES = ("README.md", "SECURITY.md")
-DECISION_FIELDS = ("ID", "Status", "Decided", "Sources", "Recheck")
+# The decision identifier is checked separately because it is a soft rule: a
+# repository can record decisions without IDs and still adopt the spine.
+DECISION_FIELDS = ("Status", "Decided", "Sources", "Recheck")
 FRONTMATTER_NAME_RE = re.compile(r"(?m)^name:\s*(?P<name>.+?)\s*$")
 REVIEWED_RE = re.compile(r"(?m)^Last reviewed:\s*(?P<date>\d{4}-\d{2}-\d{2})")
 
@@ -73,13 +100,17 @@ def decision_blocks(text: str) -> list[tuple[str, str]]:
     for index, match in enumerate(matches):
         start = match.end()
         stop = matches[index + 1].start() if index + 1 < len(matches) else len(text)
-        blocks.append((match.group("title"), text[start:stop]))
+        title = match.group("title").strip() or match.group("kind").strip()
+        blocks.append((title, text[start:stop]))
     return blocks
 
 
 def decision_field(block: str, field: str) -> str | None:
     """Return the value of a `- Field: value` line inside a decision block."""
-    match = re.search(rf"(?m)^-\s*{field}:\s*(?P<value>.*)$", block)
+    match = re.search(
+        rf"(?m)^[ \t]*(?:[-*][ \t]*)?(?:\*\*)?{re.escape(field)}(?:\*\*)?:[ \t]*(?P<value>.*)$",
+        block,
+    )
     if match is None:
         return None
     return match.group("value").strip()
@@ -97,17 +128,23 @@ def decision_ids(text: str | None) -> set[str]:
     return ids
 
 
-def check_decisions(root: Path) -> list[str]:
+def check_decisions(root: Path) -> list[Finding]:
     """Validate the decision schema, dates, sources, and registration."""
     path = root / "docs" / "decisions.md"
     text = _read_path(path)
     if text is None:
         return []
 
-    errors: list[str] = []
+    findings: list[Finding] = []
     blocks = decision_blocks(text)
     if not blocks:
-        errors.append("docs/decisions.md has no '## Decision:' entries")
+        findings.append(
+            soft(
+                "docs/decisions.md has no entries in a recognised shape; the "
+                "decision schema and the research-to-decision edge are not "
+                "machine-checkable here"
+            )
+        )
 
     index_path = root / "docs" / "evidence-urls.json"
     registered: set[str] = set()
@@ -127,17 +164,28 @@ def check_decisions(root: Path) -> list[str]:
         for field in DECISION_FIELDS:
             value = decision_field(block, field)
             if value is None or not value:
-                errors.append(f"decision '{title}' is missing a non-empty {field} field")
+                findings.append(
+                    hard(f"decision '{title}' is missing a non-empty {field} field")
+                )
 
         decision_id = decision_field(block, "ID")
-        if decision_id and not DECISION_ID_RE.match(decision_id):
-            errors.append(f"decision '{title}' has a malformed ID '{decision_id}'")
+        if not decision_id:
+            findings.append(
+                soft(
+                    f"decision '{title}' has no ID "
+                    "(an ID is how a research entry enables the decision)"
+                )
+            )
+        elif not DECISION_ID_RE.match(decision_id):
+            findings.append(soft(f"decision '{title}' has a malformed ID '{decision_id}'"))
 
         status = decision_field(block, "Status")
         if status and status not in ALLOWED_STATUSES:
-            errors.append(
-                f"decision '{title}' has status '{status}' "
-                f"(allowed: {', '.join(ALLOWED_STATUSES)})"
+            findings.append(
+                hard(
+                    f"decision '{title}' has status '{status}' "
+                    f"(allowed: {', '.join(ALLOWED_STATUSES)})"
+                )
             )
 
         decided = decision_field(block, "Decided")
@@ -145,30 +193,34 @@ def check_decisions(root: Path) -> list[str]:
             try:
                 dt.date.fromisoformat(decided)
             except ValueError:
-                errors.append(f"decision '{title}' has a malformed Decided date '{decided}'")
+                findings.append(
+                    hard(f"decision '{title}' has a malformed Decided date '{decided}'")
+                )
 
         sources = URL_RE.findall(decision_field(block, "Sources") or "")
         if not sources:
-            errors.append(f"decision '{title}' cites no source URL")
+            findings.append(hard(f"decision '{title}' cites no source URL"))
         for url in sources:
             if normalize_url(url) not in registered:
-                errors.append(
-                    f"decision '{title}' cites an unregistered source '{url}' "
-                    "(add it to docs/evidence-urls.json)"
+                findings.append(
+                    hard(
+                        f"decision '{title}' cites an unregistered source '{url}' "
+                        "(add it to docs/evidence-urls.json)"
+                    )
                 )
 
         if "Rationale:" not in block:
-            errors.append(f"decision '{title}' has no Rationale paragraph")
+            findings.append(hard(f"decision '{title}' has no Rationale paragraph"))
 
     declared = [decision_field(block, "ID") for _title, block in blocks]
     present = [value for value in declared if value]
     if len(present) != len(set(present)):
-        errors.append("docs/decisions.md has duplicate decision IDs")
+        findings.append(soft("docs/decisions.md has duplicate decision IDs"))
 
-    return errors
+    return findings
 
 
-def check_research(root: Path) -> list[str]:
+def check_research(root: Path) -> list[Finding]:
     """Validate the research register and its link to the decision log."""
     path = root / "docs" / "research" / "index.md"
     text = _read_path(path)
@@ -177,16 +229,26 @@ def check_research(root: Path) -> list[str]:
     if text is None:
         if decision_blocks(decisions_text or ""):
             return [
-                "docs/decisions.md exists but docs/research/index.md is missing "
-                "(every decision must be enabled by a research entry)"
+                soft(
+                    "docs/decisions.md exists but docs/research/index.md is missing "
+                    "(the research-to-decision edge is not yet recorded)"
+                )
             ]
         return []
 
-    errors: list[str] = []
+    findings: list[Finding] = []
     rows = RESEARCH_ROW_RE.findall(text)
     if not rows:
-        errors.append("docs/research/index.md has no '| R-### | ... |' rows")
-        return errors
+        if text.strip():
+            findings.append(
+                soft(
+                    "docs/research/index.md has no '| R-### | ... |' rows; the "
+                    "research-to-decision edge is not machine-checkable in this shape"
+                )
+            )
+        else:
+            findings.append(hard("docs/research/index.md is empty"))
+        return findings
 
     bodies = set(RESEARCH_BODY_RE.findall(text))
     known_decisions = decision_ids(decisions_text)
@@ -194,20 +256,22 @@ def check_research(root: Path) -> list[str]:
 
     for rid, _concern, _status, verified, enables in rows:
         if rid in seen:
-            errors.append(f"research id '{rid}' appears more than once")
+            findings.append(hard(f"research id '{rid}' appears more than once"))
         seen.add(rid)
         if rid not in bodies:
-            errors.append(f"research '{rid}' has no matching '## {rid}' body section")
+            findings.append(hard(f"research '{rid}' has no matching '## {rid}' body section"))
         checked = verified.strip()
         try:
             dt.date.fromisoformat(checked)
         except ValueError:
-            errors.append(f"research '{rid}' has a malformed Last Verified '{checked}'")
+            findings.append(hard(f"research '{rid}' has a malformed Last Verified '{checked}'"))
         for target in re.findall(r"D\d+", enables):
             if target not in known_decisions:
-                errors.append(
-                    f"research '{rid}' enables '{target}', which is not a decision id "
-                    "declared in docs/decisions.md"
+                findings.append(
+                    hard(
+                        f"research '{rid}' enables '{target}', which is not a decision id "
+                        "declared in docs/decisions.md"
+                    )
                 )
 
     enabled = {
@@ -216,151 +280,158 @@ def check_research(root: Path) -> list[str]:
     }
     for decision_id in sorted(known_decisions):
         if decision_id not in enabled:
-            errors.append(
-                f"decision '{decision_id}' is not enabled by any research entry "
-                "(append an R-### entry that enables it)"
+            findings.append(
+                soft(
+                    f"decision '{decision_id}' is not enabled by any research entry "
+                    "(append an R-### entry that enables it)"
+                )
             )
 
-    return errors
+    return findings
 
 
-def check_standard(root: Path, today: dt.date, max_age_days: int) -> list[str]:
+def check_standard(root: Path, today: dt.date, max_age_days: int) -> list[Finding]:
     """Validate the standard document itself and the review cadence."""
-    errors: list[str] = []
+    findings: list[Finding] = []
 
     standard = _read_path(root / "STANDARD.md")
     if standard is not None:
         if "## Normative language" not in standard:
-            errors.append("STANDARD.md has no '## Normative language' section")
+            findings.append(hard("STANDARD.md has no '## Normative language' section"))
         if "## Standard lifecycle" not in standard:
-            errors.append("STANDARD.md has no '## Standard lifecycle' section")
+            findings.append(hard("STANDARD.md has no '## Standard lifecycle' section"))
         if not re.search(r"(?m)^\*\*Version ", standard):
-            errors.append("STANDARD.md has no '**Version ...**' marker")
+            findings.append(hard("STANDARD.md has no '**Version ...**' marker"))
 
     current = _read_path(root / "docs" / "current-state.md")
     if current is not None:
         match = REVIEWED_RE.search(current)
         if match is None:
-            errors.append("docs/current-state.md has no parseable 'Last reviewed:' date")
+            findings.append(hard("docs/current-state.md has no parseable 'Last reviewed:' date"))
         else:
             try:
                 reviewed = dt.date.fromisoformat(match.group("date"))
             except ValueError:
-                errors.append("docs/current-state.md has a malformed 'Last reviewed:' date")
+                findings.append(hard("docs/current-state.md has a malformed 'Last reviewed:' date"))
             else:
                 age = (today - reviewed).days
                 if age > max_age_days:
-                    errors.append(
-                        f"docs/current-state.md was last reviewed {age} days ago "
-                        f"(limit {max_age_days}); review the standard"
+                    findings.append(
+                        hard(
+                            f"docs/current-state.md was last reviewed {age} days ago "
+                            f"(limit {max_age_days}); review the standard"
+                        )
                     )
 
-    return errors
+    return findings
 
 
-def check_evidence_index(root: Path, today: dt.date, max_age_days: int) -> list[str]:
+def check_evidence_index(root: Path, today: dt.date, max_age_days: int) -> list[Finding]:
     """Validate the evidence index shape and the freshness of each entry."""
     path = root / "docs" / "evidence-urls.json"
     text = _read_path(path)
     if text is None:
         return []
 
-    errors: list[str] = []
+    findings: list[Finding] = []
     try:
         data = json.loads(text)
     except json.JSONDecodeError as exc:
-        return [f"docs/evidence-urls.json is not valid JSON: {exc}"]
+        return [hard(f"docs/evidence-urls.json is not valid JSON: {exc}")]
 
     if not isinstance(data, dict):
-        return ["docs/evidence-urls.json must be a JSON object"]
+        return [hard("docs/evidence-urls.json must be a JSON object")]
     if not isinstance(data.get("version"), int):
-        errors.append("docs/evidence-urls.json is missing an integer 'version'")
+        findings.append(hard("docs/evidence-urls.json is missing an integer 'version'"))
     if not isinstance(data.get("description"), str) or not data.get("description"):
-        errors.append("docs/evidence-urls.json is missing a non-empty 'description'")
+        findings.append(hard("docs/evidence-urls.json is missing a non-empty 'description'"))
 
     entries = data.get("urls")
     if not isinstance(entries, list) or not entries:
-        errors.append("docs/evidence-urls.json has no 'urls' entries")
-        return errors
+        findings.append(hard("docs/evidence-urls.json has no 'urls' entries"))
+        return findings
 
     for entry in entries:
         if not isinstance(entry, dict):
-            errors.append("docs/evidence-urls.json has a non-object entry")
+            findings.append(hard("docs/evidence-urls.json has a non-object entry"))
             continue
         name = entry.get("name", "<unnamed>")
         if not isinstance(entry.get("url"), str) or not entry.get("url"):
-            errors.append(f"evidence '{name}' has no url")
+            findings.append(hard(f"evidence '{name}' has no url"))
         statuses = entry.get("expected_statuses")
         if not isinstance(statuses, list) or not statuses or not all(
             isinstance(item, int) for item in statuses
         ):
-            errors.append(f"evidence '{name}' has no non-empty integer expected_statuses")
+            findings.append(hard(f"evidence '{name}' has no non-empty integer expected_statuses"))
         verified = entry.get("last_verified")
         if not isinstance(verified, str):
-            errors.append(f"evidence '{name}' has no last_verified date")
+            findings.append(hard(f"evidence '{name}' has no last_verified date"))
             continue
         try:
             asserted = dt.date.fromisoformat(verified)
         except ValueError:
-            errors.append(f"evidence '{name}' has a malformed last_verified '{verified}'")
+            findings.append(hard(f"evidence '{name}' has a malformed last_verified '{verified}'"))
             continue
         age = (today - asserted).days
         if age > max_age_days:
-            errors.append(
-                f"evidence '{name}' was last verified {age} days ago "
-                f"(limit {max_age_days}); revalidate or mark it stale"
+            findings.append(
+                hard(
+                    f"evidence '{name}' was last verified {age} days ago "
+                    f"(limit {max_age_days}); revalidate or mark it stale"
+                )
             )
 
-    return errors
+    return findings
 
 
-def check_spine(root: Path) -> list[str]:
+def check_spine(root: Path) -> list[Finding]:
     """Require the spine files and validate the single-skill frontmatter rule."""
-    errors: list[str] = []
+    findings: list[Finding] = []
     for name in SPINE_FILES:
         path = root / name
         text = _read_path(path)
         if text is None:
-            errors.append(f"missing required spine file '{name}'")
+            findings.append(hard(f"missing required spine file '{name}'"))
         elif not text.strip():
-            errors.append(f"spine file '{name}' is empty")
+            findings.append(hard(f"spine file '{name}' is empty"))
 
     skills_dir = root / "skills"
     if not skills_dir.is_dir():
-        return errors
+        return findings
 
     skill_dirs = sorted(child for child in skills_dir.iterdir() if child.is_dir())
-    if len(skill_dirs) != 1:
-        errors.append(
-            f"skills/ must contain exactly one skill directory, found {len(skill_dirs)}"
-        )
-        return errors
+    if not skill_dirs:
+        findings.append(hard("skills/ contains no skill directory"))
+        return findings
 
-    skill_dir = skill_dirs[0]
-    skill_md = skill_dir / "SKILL.md"
-    text = _read_path(skill_md)
-    if text is None:
-        errors.append(f"skill '{skill_dir.name}' has no readable SKILL.md")
-        return errors
+    for skill_dir in skill_dirs:
+        skill_md = skill_dir / "SKILL.md"
+        text = _read_path(skill_md)
+        if text is None:
+            findings.append(hard(f"skill '{skill_dir.name}' has no readable SKILL.md"))
+            continue
 
-    name = parse_frontmatter_name(text)
-    if name is None:
-        errors.append(f"skill '{skill_dir.name}' SKILL.md has no frontmatter name")
-    elif name != skill_dir.name:
-        errors.append(
-            f"skill frontmatter name '{name}' does not match its directory '{skill_dir.name}'"
-        )
+        name = parse_frontmatter_name(text)
+        if name is None:
+            findings.append(hard(f"skill '{skill_dir.name}' SKILL.md has no frontmatter name"))
+        elif name != skill_dir.name:
+            findings.append(
+                hard(
+                    f"skill frontmatter name '{name}' does not match its directory "
+                    f"'{skill_dir.name}'"
+                )
+            )
 
-    return errors
+    return findings
 
 
-def check_payload_boundary(root: Path) -> list[str]:
+def check_payload_boundary(root: Path) -> list[Finding]:
     """Reject any relative link under skills/ that escapes its own skill directory."""
     skills_dir = root / "skills"
     if not skills_dir.is_dir():
         return []
 
-    errors: list[str] = []
+    findings: list[Finding] = []
     for skill_dir in sorted(child for child in skills_dir.iterdir() if child.is_dir()):
         for document in sorted(skill_dir.rglob("*.md")):
             text = _read_path(document)
@@ -375,23 +446,25 @@ def check_payload_boundary(root: Path) -> list[str]:
                     continue
                 resolved = (document.parent / candidate).resolve()
                 if not resolved.is_relative_to(skill_dir.resolve()):
-                    errors.append(
-                        f"{document.relative_to(root)} links outside its skill directory "
-                        f"to '{candidate}'"
+                    findings.append(
+                        hard(
+                            f"{document.relative_to(root)} links outside its skill directory "
+                            f"to '{candidate}'"
+                        )
                     )
-    return errors
+    return findings
 
 
-def check_target(root: Path, today: dt.date, max_age_days: int) -> list[str]:
+def check_target(root: Path, today: dt.date, max_age_days: int) -> list[Finding]:
     """Run every check and return the combined findings."""
-    errors: list[str] = []
-    errors += check_spine(root)
-    errors += check_standard(root, today, max_age_days)
-    errors += check_decisions(root)
-    errors += check_research(root)
-    errors += check_evidence_index(root, today, max_age_days)
-    errors += check_payload_boundary(root)
-    return errors
+    findings: list[Finding] = []
+    findings += check_spine(root)
+    findings += check_standard(root, today, max_age_days)
+    findings += check_decisions(root)
+    findings += check_research(root)
+    findings += check_evidence_index(root, today, max_age_days)
+    findings += check_payload_boundary(root)
+    return findings
 
 
 def _write(root: Path, relative: str, content: str) -> None:
@@ -458,7 +531,7 @@ def _valid_fixture(root: Path) -> None:
 
 
 def run_self_test() -> int:
-    """Mutate a valid fixture and assert the checks reject each mutation."""
+    """Mutate a valid fixture and assert the checks classify each mutation."""
     today = dt.date(2026, 10, 15)
     base = Path(tempfile.mkdtemp(prefix="standards-check-"))
     try:
@@ -467,51 +540,58 @@ def run_self_test() -> int:
             print("FAIL: self-test valid fixture was rejected", file=sys.stderr)
             return 1
 
-        mutations: list[tuple[str, str, str | None]] = [
-            ("missing Status field", "docs/decisions.md", "Status"),
-            ("unknown status", "docs/decisions.md", "Status: accepted"),
-            ("unregistered source", "docs/decisions.md", "https://example.com/docs/"),
-        ]
-
-        def assert_rejected(label: str, relative: str, new_content: str) -> bool:
+        def inspect(relative: str, new_content: str) -> list[Finding]:
             target = base / "mutations"
             if target.exists():
                 shutil.rmtree(target)
             shutil.copytree(base, target, ignore=shutil.ignore_patterns("mutations"))
             _write(target, relative, new_content)
-            findings = check_target(target, today, 180)
-            if not findings:
-                print(f"FAIL: self-test accepted a mutation ({label})", file=sys.stderr)
+            return check_target(target, today, 180)
+
+        def assert_hard(label: str, relative: str, new_content: str) -> bool:
+            findings = inspect(relative, new_content)
+            if not any(severity == HARD for severity, _ in findings):
+                print(f"FAIL: self-test did not reject a mutation as hard ({label})", file=sys.stderr)
+                return False
+            return True
+
+        def assert_soft(label: str, relative: str, new_content: str) -> bool:
+            findings = inspect(relative, new_content)
+            if not any(severity == SOFT for severity, _ in findings):
+                print(f"FAIL: self-test did not flag a soft finding ({label})", file=sys.stderr)
                 return False
             return True
 
         decisions = (base / "docs/decisions.md").read_text(encoding="utf-8")
-        if not assert_rejected(
-            mutations[0][0], "docs/decisions.md", decisions.replace("- Status: accepted\n", "")
+        if not assert_hard(
+            "missing Status field", "docs/decisions.md", decisions.replace("- Status: accepted\n", "")
         ):
             return 1
-        if not assert_rejected(
-            mutations[1][0],
+        if not assert_hard(
+            "unknown status",
             "docs/decisions.md",
             decisions.replace("Status: accepted", "Status: maybe"),
         ):
             return 1
-        if not assert_rejected(
-            mutations[2][0],
+        if not assert_hard(
+            "unregistered source",
             "docs/decisions.md",
             decisions.replace("https://example.com/docs/", "https://unregistered.example/x"),
         ):
             return 1
 
         evidence = (base / "docs/evidence-urls.json").read_text(encoding="utf-8")
-        if not assert_rejected(
+        if not assert_hard(
             "stale evidence",
             "docs/evidence-urls.json",
             evidence.replace("2026-10-15", "2000-01-01"),
         ):
             return 1
 
-        if not assert_rejected(
+        # The decision identifier and the research-to-decision edge are soft: a
+        # repository can adopt the spine without them, so they must be reported
+        # as advisory rather than failing the check.
+        if not assert_soft(
             "decision without an ID",
             "docs/decisions.md",
             decisions.replace("- ID: D1\n", ""),
@@ -519,7 +599,7 @@ def run_self_test() -> int:
             return 1
 
         research = (base / "docs/research/index.md").read_text(encoding="utf-8")
-        if not assert_rejected(
+        if not assert_hard(
             "duplicate research id",
             "docs/research/index.md",
             research.replace(
@@ -529,19 +609,19 @@ def run_self_test() -> int:
             ),
         ):
             return 1
-        if not assert_rejected(
+        if not assert_hard(
             "research enables an unknown decision",
             "docs/research/index.md",
             research.replace("| D1 |", "| D9 |"),
         ):
             return 1
-        if not assert_rejected(
+        if not assert_hard(
             "malformed research date",
             "docs/research/index.md",
             research.replace("2026-10-15", "not-a-date"),
         ):
             return 1
-        if not assert_rejected(
+        if not assert_soft(
             "decision enabled by no research",
             "docs/research/index.md",
             research.replace("| D1 |", "| |"),
@@ -549,7 +629,7 @@ def run_self_test() -> int:
             return 1
 
         standard = (base / "STANDARD.md").read_text(encoding="utf-8")
-        if not assert_rejected(
+        if not assert_hard(
             "standard without a lifecycle section",
             "STANDARD.md",
             standard.replace("## Standard lifecycle", "## Lifecycle"),
@@ -557,11 +637,53 @@ def run_self_test() -> int:
             return 1
 
         current = (base / "docs/current-state.md").read_text(encoding="utf-8")
-        if not assert_rejected(
+        if not assert_hard(
             "stale review date",
             "docs/current-state.md",
             current.replace("2026-10-15", "2000-01-01"),
         ):
+            return 1
+
+        def assert_no_hard(label: str, relative: str, new_content: str) -> bool:
+            findings = inspect(relative, new_content)
+            if any(severity == HARD for severity, _ in findings):
+                print(
+                    f"FAIL: self-test rejected an accepted shape as hard ({label})",
+                    file=sys.stderr,
+                )
+                return False
+            return True
+
+        if not assert_no_hard(
+            "ADR heading variant",
+            "docs/decisions.md",
+            decisions.replace("## Decision: Fixture decision", "## ADR-001: Fixture decision"),
+        ):
+            return 1
+
+        if not assert_soft(
+            "research register in another shape",
+            "docs/research/index.md",
+            "# Research record\n\nA dated field record with no R-### rows.\n",
+        ):
+            return 1
+
+        # An unrecognised shape is an adoption gap, not a conformance failure.
+        if not assert_soft(
+            "decisions file in an unrecognised shape",
+            "docs/decisions.md",
+            "# Decisions\n\n## Methodology over checklist\n\n**Decision:** prose.\n",
+        ):
+            return 1
+
+        multi = base / "multi"
+        if multi.exists():
+            shutil.rmtree(multi)
+        shutil.copytree(base, multi, ignore=shutil.ignore_patterns("mutations", "multi"))
+        _write(multi, "skills/alpha/SKILL.md", "---\nname: alpha\n---\n\nAlpha.\n")
+        _write(multi, "skills/beta/SKILL.md", "---\nname: beta\n---\n\nBeta.\n")
+        if any(severity == HARD for severity, _ in check_target(multi, today, 180)):
+            print("FAIL: self-test rejected a multi-skill payload as hard", file=sys.stderr)
             return 1
     finally:
         shutil.rmtree(base, ignore_errors=True)
@@ -574,6 +696,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Check a repository against the standard.")
     parser.add_argument("target", nargs="?", default=str(Path(__file__).resolve().parents[1]))
     parser.add_argument("--max-age-days", type=int, default=180)
+    parser.add_argument("--strict", action="store_true", help="treat soft findings as failures")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args(argv)
 
@@ -585,11 +708,21 @@ def main(argv: list[str] | None = None) -> int:
         print(f"FAIL: target '{root}' is not a directory", file=sys.stderr)
         return 2
 
-    errors = check_target(root, dt.date.today(), args.max_age_days)
-    for error in errors:
-        print(f"FAIL: {error}", file=sys.stderr)
-    if errors:
+    findings = check_target(root, dt.date.today(), args.max_age_days)
+    hard_findings = [message for severity, message in findings if severity == HARD]
+    soft_findings = [message for severity, message in findings if severity == SOFT]
+    for message in hard_findings:
+        print(f"FAIL: {message}", file=sys.stderr)
+    for message in soft_findings:
+        print(f"NOTE: {message}", file=sys.stderr)
+    if hard_findings or (args.strict and soft_findings):
         return 1
+    if soft_findings:
+        print(
+            f"OK: repository conforms to the hard rules; "
+            f"{len(soft_findings)} advisory finding(s)"
+        )
+        return 0
     print("OK: repository conforms to the machine-checkable parts of the standard")
     return 0
 

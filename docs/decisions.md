@@ -187,3 +187,45 @@ expects a declared last substantive update and a review trigger. This repository
 records the review date in docs/current-state.md, checks it for staleness in the
 validator, and commits to reviewing the standard, its deferred controls, and
 every registered evidence source at least twice a year.
+
+## Decision: Grade validator findings by severity
+
+- ID: D12
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://continuous-architecture.org/practices/fitness-functions , https://docs.thally.io/guides/provenance
+- Recheck: if every adopting repository keeps a research ledger, so the two soft rules could become hard
+
+Rationale: A standard that only ever fails cannot be adopted by a repository that
+is deliberately different. Dogfooding revealed that the reference implementation
+(python-project-workflow) has no research ledger by design, so the research-to-
+decision edge and the decision identifier cannot be hard rules for it. A check
+with two severities — a hard finding that fails the run, and a soft finding that
+is advisory and fails only under `--strict` — lets a repository adopt the
+standard, see the gap, and record it rather than be blocked by it. Fitness-
+function practice keeps a finding visible without disabling the check, and
+provenance guidance keeps an open gap reported rather than hidden. The two rules
+downgraded here are the research-to-decision edge and the decision identifier;
+every structural, schema, date, and boundary finding stays hard.
+
+## Decision: Accept the common shapes of the decision log and the research register
+
+- ID: D13
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://agentskills.io/specification , https://continuous-architecture.org/practices/fitness-functions
+- Recheck: if every adopting repository converges on one decision-log and research-register shape
+
+Rationale: A survey of twelve repositories showed that the validator recognised
+exactly one shape of each practice and failed correct repositories that used
+another. The multi-skill payload is a documented archetype, yet the spine
+demanded a single skill directory. A decision log headed `## ADR-0001`, and a
+research register that is a dated record rather than an `R-###` table, are the
+same practices in a different shape. The fix is to widen what satisfies the
+requirement, not to weaken it: the spine accepts one skill directory or a set of
+skill directories each named for its skill with its own payload boundary, the
+decision-log heading accepts the common ADR forms, and an unrecognised shape is
+reported as an advisory note rather than a failure. The substantive checks — a
+recognised entry with a status, a date, a registered source, and a rationale —
+stay hard. This is the fitness-function rule applied to the standard itself:
+keep the check, widen the accepted evidence.

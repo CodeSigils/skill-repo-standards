@@ -18,6 +18,8 @@ that the underlying source has not changed since.
 | R-006 | Whether the standard needs normative requirement language, a conformance claim, and a rule that resolves document conflicts | Complete | 2026-10-15 | D5, D7 |
 | R-007 | How a repository should carry a validator finding it chooses not to fix, without disabling the check | Complete | 2026-10-15 | D8 |
 | R-008 | Which licence and change-record conventions apply when a standard is published for others to implement | Complete | 2026-10-15 | D9, D10 |
+| R-009 | Whether a shared standard should grade its validator findings by severity so a deliberately different repository can adopt it | Complete | 2026-10-15 | D12 |
+| R-010 | Whether the standard should hard-encode one shape of a decision log, a research register, or a skill payload | Complete | 2026-10-15 | D13 |
 
 ## R-001 — Specification plus validator
 
@@ -111,3 +113,36 @@ deliberate absence of a CHANGELOG are both conscious, deferred-until-published
 choices rather than oversights.
 Sources: https://www.linuxfoundation.org/licensebestpractices ,
 https://github.com/TIDES-transit/TIDES
+
+## R-009 — Grading findings by severity
+
+Dogfooding the reference validator against real repositories showed that a
+standard which only ever fails cannot be adopted by one that is deliberately
+different: the reference implementation has no research ledger by design, so the
+research-to-decision edge and the decision identifier cannot be universal hard
+rules. Fitness-function practice keeps a finding visible without disabling the
+check, and provenance guidance keeps an open gap reported rather than hidden.
+Together they support two severities — a hard finding that fails the run and a
+soft finding that is advisory and fails only under `--strict`. Recorded as the
+basis for grading findings by severity and downgrading the two rules above.
+Sources: https://continuous-architecture.org/practices/fitness-functions ,
+https://docs.thally.io/guides/provenance
+
+## R-010 — Widening the accepted shapes
+
+Running the reference validator against twelve repositories separated genuine
+gaps from shape mismatches. Six conformed with no findings. Of the five that
+failed, one was a real gap (a minimal repository with no `SECURITY.md`); the
+other four had the right practice in a different shape: a multi-skill payload
+with six skill directories, a decision log headed with prose titles and
+`**Decision:**` labels, and two research registers that are dated records rather
+than `R-###` tables. The agentskills specification treats a directory of skills
+as normal, so demanding exactly one skill directory contradicted the format the
+standard is built on. The proportionate response is to widen what satisfies a
+requirement while keeping the requirement: accept multiple skill directories
+(each named for its skill, each with its own payload boundary), accept the
+common ADR heading forms, and report an unrecognised shape as an advisory note
+rather than a hard failure. With these changes eleven of the twelve repositories
+adopt cleanly or with advisory notes, and the one remaining failure is the
+genuine missing `SECURITY.md`. Sources: https://agentskills.io/specification ,
+https://continuous-architecture.org/practices/fitness-functions

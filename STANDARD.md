@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 1 (draft).** This document is the single normative source for the
+**Version 1.1 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -52,9 +52,11 @@ check. A claim with no passing check is an assertion, not evidence.
 
 ## The common spine (Grade A)
 
-1. **One canonical runtime payload.** The repository ships exactly one payload
-   directory (for example `skills/<skill-name>/`). An installed copy on a user's
-   machine is a **distribution artifact**, never a second source of truth.
+1. **A canonical runtime payload.** The repository ships either one payload
+   directory (for example `skills/<skill-name>/`) or a set of skill directories,
+   each named for its skill and each with its own payload boundary. An installed
+   copy on a user's machine is a **distribution artifact**, never a second
+   source of truth.
 2. **`SKILL.md` frontmatter carries exactly `name` and `description`.** `name`
    is kebab-case and equals its directory name. `description` states what the
    skill does and when it applies, in the third person, without XML tags.
@@ -203,11 +205,14 @@ them until drift has been observed:
 ## The reference validator
 
 This repository ships `scripts/standards_check.py`. It checks only what is
-machine-checkable and never judges prose.
+machine-checkable and never judges prose. Every finding carries a severity: a
+**hard** finding fails the run, and a **soft** finding is advisory and fails only
+under `--strict`.
 
 ```bash
 python3 scripts/standards_check.py            # check this repository
 python3 scripts/standards_check.py TARGET     # check another repository
+python3 scripts/standards_check.py TARGET --strict   # treat soft findings as failures
 python3 scripts/standards_check.py --self-test
 ```
 
@@ -233,6 +238,16 @@ It verifies:
    present;
 10. the review cadence — `docs/current-state.md` carries a parseable
     `Last reviewed:` date within the maximum age.
+
+Two rules are **soft** rather than hard: the decision identifier and the
+research-to-decision edge. A repository that deliberately keeps no research
+ledger can still adopt the standard and the hard rules, and see the gap as an
+advisory note instead of a failure. The accepted shapes are deliberately wide: a
+multi-skill payload, a decision log under any of the common ADR headings, and a
+research register or decision log in a shape the validator does not recognise,
+are all reported as advisory notes rather than failures. A shape mismatch is
+advisory; a substantive breach — a recognised entry with no status, no date, an
+unregistered source, or no rationale — stays hard.
 
 Detection is automated; **correction is not.** A recorded decision is a starting
 point for the next reader, not proof.

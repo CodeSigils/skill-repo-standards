@@ -37,6 +37,12 @@ Last reviewed: 2026-10-15.
 - An accepted-findings pattern for carrying a known validator finding without
   disabling the check: a baseline that never waives and an exception that expires.
   (checked 2026-10-15)
+- A deliberately wide reading of the accepted shapes: a multi-skill payload, a
+  decision log under any common ADR heading, and a research register or decision
+  log in an unrecognised shape are advisory notes, not failures; a substantive
+  breach stays hard. A survey of twelve sibling repositories found eleven adopt
+  cleanly or with advisory notes, leaving one genuine gap (a minimal repository
+  with no `SECURITY.md`). (checked 2026-10-15)
 - Grade C: controls a repository has individually justified against a named
   failure mode. (checked 2026-10-15)
 
