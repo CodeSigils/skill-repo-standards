@@ -1,7 +1,7 @@
 # Conformance
 
 - **Grade claimed:** B — spine plus anti-rot core.
-- **`STANDARD.md` version:** 1.1 (draft).
+- **`STANDARD.md` version:** 1.2 (draft).
 - **Checked:** 2026-10-15.
 - **Command:** `python3 scripts/standards_check.py`
 
