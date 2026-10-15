@@ -59,9 +59,11 @@ Last reviewed: 2026-10-15.
 - A conformance corpus, checked in under `conformance/`: fixture repositories in
   known shapes with an expected-results manifest and a runner
   (`scripts/check_conformance.py`) that re-runs the validator against each and
-  compares the exit code and the hard and soft finding sets. It makes a grade
-  checkable rather than asserted, and its fixtures render date tokens at run time
-  so a checked-in fixture cannot rot past the freshness window. (checked 2026-10-15)
+  compares the exit code and the hard and soft finding sets. Every check the
+  validator performs is exercised by at least one fixture, so a regression in any
+  of them fails the corpus instead of passing silently. It makes a grade checkable
+  rather than asserted, and its fixtures render date tokens at run time so a
+  checked-in fixture cannot rot past the freshness window. (checked 2026-10-15)
 - Grade C: controls a repository has individually justified against a named
   failure mode. (checked 2026-10-15)
 

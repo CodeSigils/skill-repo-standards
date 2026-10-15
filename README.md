@@ -95,6 +95,11 @@ not run.
 │       │   ├── README.md
 │       │   └── docs
 │       │       └── decisions.md
+│       ├── evidence-shape
+│       │   ├── README.md
+│       │   ├── SECURITY.md
+│       │   └── docs
+│       │       └── evidence-urls.json
 │       ├── grade-a
 │       │   ├── README.md
 │       │   ├── SECURITY.md
@@ -110,11 +115,34 @@ not run.
 │       │       ├── evidence-urls.json
 │       │       └── research
 │       │           └── index.md
-│       └── stale-evidence
+│       ├── payload-boundary
+│       │   ├── README.md
+│       │   ├── SECURITY.md
+│       │   └── skills
+│       │       └── example
+│       │           └── SKILL.md
+│       ├── skill-name-mismatch
+│       │   ├── README.md
+│       │   ├── SECURITY.md
+│       │   └── skills
+│       │       └── example
+│       │           └── SKILL.md
+│       ├── stale-evidence
+│       │   ├── README.md
+│       │   ├── SECURITY.md
+│       │   └── docs
+│       │       └── evidence-urls.json
+│       ├── standard-document
+│       │   ├── README.md
+│       │   ├── SECURITY.md
+│       │   ├── STANDARD.md
+│       │   └── docs
+│       │       └── current-state.md
+│       └── undocumented-gate
+│           ├── .githooks
+│           │   └── pre-push
 │           ├── README.md
-│           ├── SECURITY.md
-│           └── docs
-│               └── evidence-urls.json
+│           └── SECURITY.md
 ├── docs
 │   ├── current-state.md
 │   ├── decisions.md

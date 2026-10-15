@@ -1,10 +1,10 @@
 # Conformance
 
 - **Grade claimed:** B — spine plus anti-rot core.
-- **`STANDARD.md` version:** 1.5 (draft).
+- **`STANDARD.md` version:** 1.6 (draft).
 - **Checked:** 2026-10-15.
 - **Command:** `python3 scripts/standards_check.py`
-- **Corpus run:** `python3 scripts/check_conformance.py` — 5 of 5 fixtures match
+- **Corpus run:** `python3 scripts/check_conformance.py` — 10 of 10 fixtures match
   their expected results.
 
 ## Notes

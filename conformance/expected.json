@@ -48,6 +48,56 @@
         "decision 'Ship the fixture without a status' has no ID (an ID is how a research entry enables the decision)",
         "docs/decisions.md exists but docs/research/index.md is missing (the research-to-decision edge is not yet recorded)"
       ]
+    },
+    {
+      "name": "standard-document",
+      "summary": "A STANDARD.md that carries a version and normative language but no lifecycle section, and a current-state document whose review date is past the freshness window.",
+      "exit_code": 1,
+      "hard": [
+        "STANDARD.md has no '## Standard lifecycle' section",
+        "docs/current-state.md was last reviewed 400 days ago (limit 180); review the standard"
+      ],
+      "soft": []
+    },
+    {
+      "name": "payload-boundary",
+      "summary": "A skill whose name matches its directory but whose body links out of its own payload directory.",
+      "exit_code": 1,
+      "hard": [
+        "skills/example/SKILL.md links outside its skill directory to '../../README.md'"
+      ],
+      "soft": []
+    },
+    {
+      "name": "skill-name-mismatch",
+      "summary": "A skill directory whose SKILL.md frontmatter name does not match the directory name.",
+      "exit_code": 1,
+      "hard": [
+        "skill frontmatter name 'other' does not match its directory 'example'"
+      ],
+      "soft": []
+    },
+    {
+      "name": "undocumented-gate",
+      "summary": "A hook that runs a script the README verification block does not document. Advisory, not a failure.",
+      "exit_code": 0,
+      "hard": [],
+      "soft": [
+        "a hook or workflow runs 'scripts/undeclared.py', which no README verification block documents"
+      ]
+    },
+    {
+      "name": "evidence-shape",
+      "summary": "An evidence index missing a version and a description, with an entry that lacks expected statuses and carries a malformed date, plus a non-object entry.",
+      "exit_code": 1,
+      "hard": [
+        "docs/evidence-urls.json is missing an integer 'version'",
+        "docs/evidence-urls.json is missing a non-empty 'description'",
+        "evidence 'Broken entry' has no non-empty integer expected_statuses",
+        "evidence 'Broken entry' has a malformed last_verified 'not-a-date'",
+        "docs/evidence-urls.json has a non-object entry"
+      ],
+      "soft": []
     }
   ]
 }

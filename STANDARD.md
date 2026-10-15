@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 1.5 (draft).** This document is the single normative source for the
+**Version 1.6 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -271,7 +271,9 @@ A companion check, `scripts/check_conformance.py`, runs the validator against
 the checked-in fixtures under `conformance/` and compares each fixture's exit
 code and finding set with `conformance/expected.json`. It verifies the
 validator, not a repository: the fixtures exist so that a stated result can be
-reproduced by a reader instead of taken on trust.
+reproduced by a reader instead of taken on trust. Every check the validator
+performs is exercised by at least one fixture, so a regression in any of them
+appears as a corpus failure rather than as silence.
 
 Detection is automated; **correction is not.** A recorded decision is a starting
 point for the next reader, not proof.

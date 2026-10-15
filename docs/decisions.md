@@ -369,3 +369,28 @@ the validator's; and fixtures carry `{{TODAY}}`/`{{STALE}}` tokens rendered at
 run time, so a checked-in fixture cannot rot into failure once it ages past the
 freshness window. The corpus makes a grade checkable, not true — it verifies the
 validator, not a repository's prose, which stays with human review.
+
+## Decision: Cover every validator check with a corpus fixture
+
+- ID: D21
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://hushspec.org/docs/conformance-statement , https://www.w3.org/TR/qaframe-spec/specgl-ics.html
+- Recheck: if the validator gains a check no fixture exercises, or a fixture stops
+  representing a shape the standard accepts
+
+Rationale: an inspection of the first corpus found it exercised four of the
+validator's seven checks. `check_standard`, `check_payload_boundary`, and
+`check_consistency` had no fixture, so a regression in any of them would have
+passed the corpus in silence while the standard's claim that the fixtures
+reproduce the validator's behaviour stayed formally true. Five fixtures now cover
+them and two further uncovered branches (a skill whose frontmatter name does not
+match its directory; an evidence index that is malformed rather than merely
+stale). The standard's own thesis is that a claim without a passing check is an
+assertion, and a corpus that checks part of the validator while implying it
+checks all of it is the same gap at one remove. Coverage is stated in
+`STANDARD.md` rather than left to be inferred from the fixture list, so a future
+check that arrives without a fixture is a visible omission. The validators'
+per-branch edge cases — a duplicate research id, an `Enables` target that names no
+decision, a duplicate decision id — remain asserted by the validator's own
+`--self-test`, which is the cheaper place for a single-line mutation.

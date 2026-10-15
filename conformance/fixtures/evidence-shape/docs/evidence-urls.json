@@ -1,0 +1,11 @@
+{
+  "description": "",
+  "urls": [
+    {
+      "name": "Broken entry",
+      "url": "https://example.invalid/x",
+      "last_verified": "not-a-date"
+    },
+    "oops"
+  ]
+}

@@ -27,6 +27,7 @@ that the underlying source has not changed since.
 | R-015 | Whether a gate can be added to a hook or workflow without the README documenting it, and whether a definite HTTP status must not be mistaken for an environmental failure | Complete | 2026-10-15 | D18 |
 | R-016 | Whether a repository that pins Actions by SHA should adopt Dependabot, and whether it should adopt uv and Python dependencies | Complete | 2026-10-15 | D19 |
 | R-017 | Whether a claimed conformance grade should be backed by a checked-in corpus that proves the validator behaves correctly across known shapes | Complete | 2026-10-15 | D20 |
+| R-018 | Whether a corpus must exercise every check the validator performs, so a regression in an unchecked branch cannot pass in silence | Complete | 2026-10-15 | D21 |
 
 ## R-001 — Specification plus validator
 
@@ -279,3 +280,32 @@ with a fixed date would rot into failure once it fell outside the freshness
 window.
 
 Sources: https://hushspec.org/docs/conformance-statement , https://axlspec.org/conformance , https://www.w3.org/TR/qaframe-spec/specgl-ics.html
+
+## R-018 — Covering every validator check
+
+The first corpus was built from the shapes the adoption survey had already
+exposed: a grade A repository, a grade B repository, a repository whose decision
+log and research record use unparsed shapes, a repository with stale evidence,
+and a broken repository. Reading the validator against that list showed the
+corpus exercised four of its seven checks. `check_standard`,
+`check_payload_boundary`, and `check_consistency` had no fixture at all, and two
+branches of covered checks — a skill whose frontmatter name does not match its
+directory, and an evidence index that is malformed rather than stale — were
+untested.
+
+A conformance corpus that checks part of a validator while presenting itself as
+the evidence for the validator's behaviour has the same defect it was built to
+remove, one level up: the claim outruns the check. HushSpec's guidance is that a
+statement without its report is an assertion; the same reasoning applies to a
+corpus with silent blind spots. The proportionate response was five more
+fixtures rather than a new mechanism, and a sentence in `STANDARD.md` stating
+that every check is exercised, so a future check arriving without a fixture is a
+visible omission instead of an invisible one.
+
+Single-line edge cases inside a check — a duplicate research id, an `Enables`
+target naming no decision, a duplicate decision id — stay with the validator's
+own `--self-test`, which builds a fixture, mutates one input, and asserts the
+rejection. Duplicating them in the corpus would add files without adding
+coverage of a distinct failure mode.
+
+Sources: https://hushspec.org/docs/conformance-statement , https://www.w3.org/TR/qaframe-spec/specgl-ics.html
