@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 1.1 (draft).** This document is the single normative source for the
+**Version 1.2 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -98,6 +98,13 @@ record trustworthy and findable.
   or decision-critical facts at the point of use; and record whether the result
   was reused, revalidated, superseded, or newly discovered. Do not silently
   repeat a search.
+- **One owner of truth.** Truth has two owners, and they do not cross.
+  `docs/current-state.md` owns what is true about the *repository* now; the
+  runtime payload (`SKILL.md` and its `references/`) owns what an *installed*
+  skill does. A payload link into `docs/` does not resolve once the skill is
+  copied into a host, so a runtime rule belongs in the payload and a repository
+  fact belongs in the current-state document. Every other file links to the
+  owner rather than restating it.
 - **The canonical-owner rule.** Every behavioural rule has exactly one owning
   file. Other files link to it instead of restating it. If two files assert the
   same rule, one of them is wrong.
@@ -219,8 +226,8 @@ python3 scripts/standards_check.py --self-test
 It verifies:
 
 1. spine files (`README.md`, `SECURITY.md`; and if a `skills/` directory exists,
-   exactly one skill whose `SKILL.md` frontmatter `name` equals its directory
-   name);
+   every skill directory whose `SKILL.md` frontmatter `name` equals its
+   directory name);
 2. the decision schema — required fields, an allowed status, an ISO date for
    `Decided`, at least one source URL, a non-empty `Recheck`, and a rationale;
 3. evidence registration — every decision source URL is present in the evidence
@@ -254,12 +261,12 @@ point for the next reader, not proof.
 
 ## Conformance checklist
 
-- [ ] **Grade A** — one canonical payload; `SKILL.md` frontmatter is exactly
-      `name` + `description`; one validation entrypoint with `--self-test`;
-      `README.md` and `SECURITY.md`; the commit contract; SHA-pinned,
-      least-privilege automation.
+- [ ] **Grade A** — one payload directory or a set of skill directories;
+      `SKILL.md` frontmatter is exactly `name` + `description`; one validation
+      entrypoint with `--self-test`; `README.md` and `SECURITY.md`; the commit
+      contract; SHA-pinned, least-privilege automation.
 - [ ] **Grade B** — `docs/current-state.md` (mutable, dated) split from
       `docs/research/index.md` (append-only); `docs/decisions.md`; a registered
-      `docs/evidence-urls.json`; the research-once protocol; the canonical-owner
-      rule.
+      `docs/evidence-urls.json`; the research-once protocol; one owner of truth;
+      the canonical-owner rule.
 - [ ] **Grade C** — each additional control names the failure mode it prevents.

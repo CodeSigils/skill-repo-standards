@@ -244,3 +244,57 @@ gives the standard the stable URL, the public conformance claim, and the shared
 history the anti-rot core assumes, and it matches how the format it builds on is
 distributed — a canonical document plus a bundled validator in a public
 repository. Detection stays local; publication only widens who can run it.
+
+## Decision: Name the owner of truth for the repository and for the payload
+
+- ID: D15
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://artel.run/docs/documentation/ , https://agentskills.io/specification
+- Recheck: if the payload boundary is dropped, or the standard gains a runtime document
+
+Rationale: A record rots when it hand-duplicates a source of truth, and a skill is
+copied into a host where the authoring repository's documents do not exist. Read
+together, those two facts mean truth has two owners that must not cross: the
+mutable current-state document owns what is true about the repository, and the
+runtime payload owns what an installed skill does, so a payload does not link into
+`docs/`. Before this entry the split was implied by the payload-boundary check but
+never stated, which left "one owner of truth" open to the reading that a skill
+should point at the repository's documents. The rule is now explicit and its owner
+is `STANDARD.md` §The anti-rot core.
+
+## Decision: Record the duplicated verification-command list and keep the manifest deferred
+
+- ID: D16
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://continuous-architecture.org/practices/fitness-functions
+- Recheck: when a verification command is observed to drop from one surface and a gate stops running
+
+Rationale: The verification commands appear in the README, the reference-validator
+section of `STANDARD.md`, the git hooks, and the CI workflow. A sibling repository
+collapsed the same duplication by sourcing the list from one module and asserting
+that CI contains it, but this standard already defers "a shared stage manifest
+spanning more than two surfaces", and the proportionality rule forbids adopting a
+control before its failure mode is observed. The failure mode — a verification
+command silently dropped from one surface — has not been observed. The
+proportionate response is therefore to record the duplication in
+`docs/current-state.md` §What is next and keep the control deferred, so the gap is
+visible rather than rediscovered.
+
+## Decision: Explain the standard and publish a next-steps list
+
+- ID: D17
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://agents.md/ , https://llmstxt.org/
+- Recheck: if the README framing begins to duplicate `STANDARD.md`
+
+Rationale: A reader who arrives at the repository learns what it is but not why it
+exists beside ADR practice, fitness functions, freshness tooling, and the
+agent-discovery formats; both the agent-instruction and the discovery conventions
+expect a front door that orients a human or an agent. Separately, committed-but-
+unbuilt work needs one discoverable place for both audiences, and a second
+forward-looking document would be another rot surface. The explanation therefore
+lives in the README, and the next steps live as `## What is next` in the mutable
+current-state document, which already owns "now".

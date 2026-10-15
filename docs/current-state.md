@@ -16,14 +16,17 @@ Last reviewed: 2026-10-15.
 
 ## What the standard currently covers
 
-- Grade A "spine": one canonical payload; `SKILL.md` frontmatter of exactly
-  `name` and `description`; one validation entrypoint with `--self-test`;
-  `README.md` and `SECURITY.md`; a `what:`/`why:` commit contract; SHA-pinned
-  least-privilege automation. (checked 2026-10-15)
+- Grade A "spine": one payload directory or a set of skill directories; `SKILL.md`
+  frontmatter of exactly `name` and `description`; one validation entrypoint with
+  `--self-test`; `README.md` and `SECURITY.md`; a `what:`/`why:` commit contract;
+  SHA-pinned least-privilege automation. (checked 2026-10-15)
 - Grade B "anti-rot core": a mutable current-state document split from an
   append-only research record; an immutable decision log; a machine-readable
   evidence index with verified dates; the research-once protocol; the
   canonical-owner rule. (checked 2026-10-15)
+- One owner of truth per audience: `docs/current-state.md` owns what is true
+  about this repository, and the runtime payload owns what an installed skill
+  does; a payload is kept from linking into `docs/`. (checked 2026-10-15)
 - A change lifecycle (research → finding → decision → implementation → check)
   whose research-to-decision edge is machine-enforced: every decision must be
   enabled by a research entry. (checked 2026-10-15)
@@ -45,6 +48,19 @@ Last reviewed: 2026-10-15.
   with no `SECURITY.md`). (checked 2026-10-15)
 - Grade C: controls a repository has individually justified against a named
   failure mode. (checked 2026-10-15)
+
+## What is next
+
+Committed-but-unbuilt work, in the order it is worth doing:
+
+- Publish a **conformance corpus**: a set of small fixture repositories, each in
+  a known grade shape, so a claimed grade can be checked rather than only
+  asserted. The validator's `--self-test` fixtures are the seed. (checked 2026-10-15)
+- Decide whether the verification-command list should be sourced from one place
+  across the README, the hooks, and CI. The list is duplicated today; a shared
+  stage manifest stays deferred per `STANDARD.md` §Deferred controls until a
+  verification command is actually observed to drop from one surface. See
+  `docs/decisions.md` D16. (checked 2026-10-15)
 
 ## What is deliberately deferred
 

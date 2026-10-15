@@ -21,6 +21,9 @@ that the underlying source has not changed since.
 | R-009 | Whether a shared standard should grade its validator findings by severity so a deliberately different repository can adopt it | Complete | 2026-10-15 | D12 |
 | R-010 | Whether the standard should hard-encode one shape of a decision log, a research register, or a skill payload | Complete | 2026-10-15 | D13 |
 | R-011 | Whether a shared standard should be published as a standalone public repository so others can adopt it by copy | Complete | 2026-10-15 | D14 |
+| R-012 | Whether truth needs one owner, and which document owns repository facts versus installed behaviour | Complete | 2026-10-15 | D15 |
+| R-013 | Whether a verification-command list duplicated across the README, the hooks, and CI warrants a shared manifest now | Complete | 2026-10-15 | D16 |
+| R-014 | Whether the standard should explain its relationship to the established practice families and publish a next-steps list | Complete | 2026-10-15 | D17 |
 
 ## R-001 — Specification plus validator
 
@@ -158,3 +161,41 @@ builds on is distributed exactly this way — a canonical specification plus a
 bundled validator in a public repository — and the adoption survey in R-010 is
 the first evidence that the standard transfers beyond the repositories that
 inspired it. Enables D14. Sources: https://agentskills.io/specification
+
+## R-012 — One owner of truth
+
+The documentation-drift sources agree that a document rots when it hand-duplicates
+a source of truth, and that what can be derived should be derived while what cannot
+should be watched. Separately, the agentskills specification ships each skill as a
+self-contained directory whose files are copied into a host where the authoring
+repository does not exist. Together they imply two owners of truth that must not
+cross: the mutable current-state document owns what is true about the repository,
+and the runtime payload owns what an installed skill does, with the payload kept
+from linking into the repository's documents. Recorded as the basis for the
+one-owner-of-truth bullet in `STANDARD.md` §The anti-rot core.
+Sources: https://artel.run/docs/documentation/ ,
+https://agentskills.io/specification
+
+## R-013 — The duplicated verification-command list
+
+The verification commands appear in the README, the reference-validator section of
+`STANDARD.md`, the git hooks, and the CI workflow. The same duplication class was
+solved in a sibling repository by sourcing the list from one module and asserting
+that CI contains it — but this standard already defers "a shared stage manifest
+spanning more than two surfaces", and fitness-function practice says a control is
+adopted only when its failure mode is observed. The failure mode here, a
+verification command silently dropped from one surface, has not been observed, so
+the proportionate response is to record the duplication and keep the control
+deferred. Recorded so the gap is visible rather than rediscovered.
+Sources: https://continuous-architecture.org/practices/fitness-functions
+
+## R-014 — Explaining the standard and publishing a next-steps list
+
+A reader who arrives at the repository learns what it is but not why it exists
+beside ADR practice, fitness functions, freshness tooling, and the agent-discovery
+formats; the agent-instruction and discovery conventions both expect a front door
+that orients a human or an agent. Separately, committed-but-unbuilt work needs one
+discoverable place for both audiences, and a second forward-looking document would
+be another rot surface. Recorded as the basis for a front-door explanation in the
+README and a `## What is next` section in the mutable current-state document.
+Sources: https://agents.md/ , https://llmstxt.org/

@@ -16,6 +16,30 @@ make a written record findable before it is re-derived for the hundredth time.
 This repository writes the shared floor down once, in one place, and provides a
 validator that enforces the machine-checkable parts of it.
 
+## Why this standard, not just the five building blocks
+
+The durable-context field has five well-established families: decision records
+(MADR, AWS ADRs, log4brains), executable governance (fitness functions),
+freshness and provenance, agent discoverability (AGENTS.md, llms.txt), and agent
+memory. They are practice families and tools, not a product for the artifact
+class *agent-skill repository*, and none is stdlib-portable to an ecosystem that
+is shipped by copying a directory.
+
+This repository is a thin, scoped adapter, not a rival synthesis. It consumes
+those families — the sources are registered in `docs/evidence-urls.json` and the
+adopt-versus-defer choice for each is recorded in `docs/decisions.md` — and adds
+the one thing none of them ships: a validator for skill repositories.
+`agentskills`' `skills-ref validate` covers the file format only. The shape here
+is deliberately the same as the thing it builds on: a canonical document plus a
+bundled validator, in a public repository, adoptable by copy.
+
+It is honest about its own limits. A first sweep across twelve sibling
+repositories exposed that the validator had hard-encoded one shape of each good
+practice and failed correct repositories that used another; the fix was to widen
+what satisfies the requirement, not to weaken it (see `docs/decisions.md` D13).
+Detection is automated and correction is routed to review — the validator never
+judges whether a sentence is true.
+
 ## The two layers
 
 - **The standard** — [`STANDARD.md`](STANDARD.md). A graded specification
@@ -23,10 +47,9 @@ validator that enforces the machine-checkable parts of it.
   normative proportionality rule: adopt a control only when its failure mode
   actually exists.
 - **The validator** — [`scripts/standards_check.py`](scripts/standards_check.py).
-  Checks spine files, the standard's own document and review date, the decision
-  schema, the research register, the research-to-decision edge, evidence
-  registration, freshness, the evidence index, and the payload boundary. It
-  detects drift; it never judges prose.
+  It checks every machine-checkable rule listed under
+  [`STANDARD.md` §The reference validator](STANDARD.md). It detects drift; it
+  never judges prose.
 
 ## Use the validator
 
@@ -102,6 +125,12 @@ that wants the claim to be durable may record it in a short `CONFORMANCE.md`
 naming the claimed grade, the `STANDARD.md` version it was checked against, and
 the date of the check. This repository's own claim is in
 [`CONFORMANCE.md`](CONFORMANCE.md).
+
+## What is next
+
+Committed-but-unbuilt work — currently a conformance corpus and a decision on the
+duplicated verification-command list — is listed in
+[`docs/current-state.md`](docs/current-state.md) under "What is next".
 
 ## License
 

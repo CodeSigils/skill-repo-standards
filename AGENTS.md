@@ -14,7 +14,9 @@ Before changing anything, read:
 1. `STANDARD.md` — the normative rules. Do not restate them elsewhere; link.
 2. `README.md` — layout, usage, and the verification commands.
 3. `docs/decisions.md` — durable decisions already made, with sources.
-4. The specific script or document you intend to change.
+4. `docs/current-state.md` — what is true now, including the `## What is next`
+   list of committed-but-unbuilt work.
+5. The specific script or document you intend to change.
 
 ## Before re-researching
 
@@ -23,6 +25,13 @@ Follow the research-once protocol in `STANDARD.md`. Search `docs/decisions.md`,
 research. Reuse a recorded decision when its scope and freshness fit; revalidate
 volatile facts at the point of use; record whether the result was reused,
 revalidated, superseded, or newly discovered.
+
+## Owner of truth
+
+Truth has one owner per audience. `docs/current-state.md` owns what is true about
+this repository; the runtime payload owns what an installed skill does, and a
+payload does not link into `docs/`. Every other file links to the owner rather
+than restating it. See `STANDARD.md` §The anti-rot core.
 
 ## Canonical-owner rule
 
