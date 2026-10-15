@@ -394,3 +394,21 @@ check that arrives without a fixture is a visible omission. The validators'
 per-branch edge cases — a duplicate research id, an `Enables` target that names no
 decision, a duplicate decision id — remain asserted by the validator's own
 `--self-test`, which is the cheaper place for a single-line mutation.
+
+## Decision: Ship a standalone concern-oriented research consultation guide
+
+- ID: D22
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://ebse.webspace.durham.ac.uk/ , https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle , https://adr.github.io/madr/ , https://docs.github.com/en/get-started/git-basics/ignoring-files , https://docs.github.com/en/enterprise-cloud%40latest/repositories/creating-and-managing-repositories/best-practices-for-repositories , https://docs.github.com/en/code-security/how-tos/secure-your-secrets/work-with-leak-prevention/push-protection-on-the-command-line , https://github.com/github/gitignore
+- Recheck: if a primary source changes, another recurring concern is added, or the consultation guide becomes a competing source registry
+
+Rationale: recurring concerns, such as secrets, `.gitignore`, and repository
+security, were being researched repeatedly because existing decision and source
+records were correct but not discoverable by concern. Evidence-Based Software
+Engineering, GOV.UK assurance guidance, and ADR practice support a sequence in
+which authoritative evidence informs a recorded decision. The repository
+therefore ships `docs/research/consulting.md`: a small, standalone map from a
+concern to the existing decision log, evidence registry, and research record.
+The guide contains no duplicate evidence inventory and makes no claim that a
+personal lab is required, so the standard remains independently adoptable.

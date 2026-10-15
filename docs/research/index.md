@@ -28,6 +28,7 @@ that the underlying source has not changed since.
 | R-016 | Whether a repository that pins Actions by SHA should adopt Dependabot, and whether it should adopt uv and Python dependencies | Complete | 2026-10-15 | D19 |
 | R-017 | Whether a claimed conformance grade should be backed by a checked-in corpus that proves the validator behaves correctly across known shapes | Complete | 2026-10-15 | D20 |
 | R-018 | Whether a corpus must exercise every check the validator performs, so a regression in an unchecked branch cannot pass in silence | Complete | 2026-10-15 | D21 |
+| R-019 | Whether recurring concerns need a standalone, concern-oriented consultation path so official guidance is located before a project decision | Complete | 2026-10-15 | D22 |
 
 ## R-001 — Specification plus validator
 
@@ -309,3 +310,28 @@ rejection. Duplicating them in the corpus would add files without adding
 coverage of a distinct failure mode.
 
 Sources: https://hushspec.org/docs/conformance-statement , https://www.w3.org/TR/qaframe-spec/specgl-ics.html
+
+## R-019 — Research-first, concern-oriented consultation
+
+Evidence-Based Software Engineering frames evidence use as asking an answerable
+question, locating the best available evidence, critically appraising it, and
+integrating it with practitioner judgment. GOV.UK's evidence-led assurance
+guidance makes the operational chain explicit: signals and metrics become
+evidence, assertions, and decisions. MADR then preserves the context, options,
+outcome, and consequences of the resulting decision.
+
+The recurring repository-security concern demonstrates why a lookup must be
+discoverable. GitHub documents that `.gitignore` does not remove tracked files,
+maintains reusable ignore templates, and recommends a security baseline that
+includes secret scanning, push protection, code scanning, dependency alerts, and
+`SECURITY.md`. A target repository still decides which controls fit its scope;
+the consultation guide merely ensures official guidance is found before that
+decision, rather than repeatedly rediscovered.
+
+Sources: https://ebse.webspace.durham.ac.uk/ ,
+https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle ,
+https://adr.github.io/madr/ ,
+https://docs.github.com/en/get-started/git-basics/ignoring-files ,
+https://docs.github.com/en/enterprise-cloud%40latest/repositories/creating-and-managing-repositories/best-practices-for-repositories ,
+https://docs.github.com/en/code-security/how-tos/secure-your-secrets/work-with-leak-prevention/push-protection-on-the-command-line ,
+https://github.com/github/gitignore

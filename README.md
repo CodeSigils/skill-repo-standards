@@ -62,6 +62,14 @@ python3 scripts/standards_check.py --self-test
 Exit codes follow the local check contract: `0` clean, `1` findings, `2` could
 not run.
 
+## Consult research before re-researching
+
+This repository is standalone: research-sensitive work starts with its own
+[consultation guide](docs/research/consulting.md), then its decision log,
+machine-readable evidence registry, and append-only research record. The guide
+maps recurring concerns to `domain_tag` values in `docs/evidence-urls.json`; it
+does not require a personal lab or another repository to answer the question.
+
 ## Repository layout
 
 ```text

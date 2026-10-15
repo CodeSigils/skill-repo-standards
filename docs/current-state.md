@@ -66,6 +66,9 @@ Last reviewed: 2026-10-15.
   checked-in fixture cannot rot past the freshness window. (checked 2026-10-15)
 - Grade C: controls a repository has individually justified against a named
   failure mode. (checked 2026-10-15)
+- A standalone research consultation guide maps recurring concerns to the
+  evidence registry and the records that support each decision; it can be used
+  without a personal lab or any other repository. (checked 2026-10-15)
 
 ## What is next
 
