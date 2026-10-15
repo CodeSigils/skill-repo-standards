@@ -27,6 +27,12 @@ research. Reuse a recorded decision when its scope and freshness fit; revalidate
 volatile facts at the point of use; record whether the result was reused,
 revalidated, superseded, or newly discovered.
 
+For a new behaviour-changing decision, use
+[`docs/research/evidence-appraisal.md`](docs/research/evidence-appraisal.md).
+If the decision has multiple viable alternatives and material risk, cost, or
+irreversibility, consult `docs/research/trade-study.md`; do not invent a scoring
+matrix for a routine choice.
+
 ## Owner of truth
 
 Truth has one owner per audience. `docs/current-state.md` owns what is true about

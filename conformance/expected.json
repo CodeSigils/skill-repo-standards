@@ -27,6 +27,13 @@
       "soft": []
     },
     {
+      "name": "evidence-profile",
+      "summary": "A recognised decision that opts into the complete primary evidence-appraisal profile.",
+      "exit_code": 0,
+      "hard": [],
+      "soft": []
+    },
+    {
       "name": "advisory-shapes",
       "summary": "A real decision log and research record written in shapes the validator does not parse. Both are advisory, never a failure.",
       "exit_code": 0,

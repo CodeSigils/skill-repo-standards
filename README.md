@@ -72,6 +72,11 @@ does not require a personal lab or another repository to answer the question.
 Agents receive the same route from [`AGENTS.md`](AGENTS.md), so a human and an
 agent consult one canonical process rather than separate instructions.
 
+For a new behaviour-changing decision, use the compact
+[evidence-appraisal profile](docs/research/evidence-appraisal.md). For a
+material multi-option choice only, use the optional Grade C
+[trade-study template](docs/research/trade-study.md).
+
 ## Repository layout
 
 ```text
@@ -110,6 +115,14 @@ agent consult one canonical process rather than separate instructions.
 │       │   ├── SECURITY.md
 │       │   └── docs
 │       │       └── evidence-urls.json
+│       ├── evidence-profile
+│       │   ├── README.md
+│       │   ├── SECURITY.md
+│       │   └── docs
+│       │       ├── decisions.md
+│       │       ├── evidence-urls.json
+│       │       └── research
+│       │           └── index.md
 │       ├── grade-a
 │       │   ├── README.md
 │       │   ├── SECURITY.md
@@ -167,7 +180,9 @@ agent consult one canonical process rather than separate instructions.
 │   ├── evidence-urls.json
 │   └── research
 │       ├── consulting.md
-│       └── index.md
+│       ├── evidence-appraisal.md
+│       ├── index.md
+│       └── trade-study.md
 └── scripts
     ├── check_commit_messages.py
     ├── check_conformance.py
@@ -213,8 +228,9 @@ the date of the check. This repository's own claim is in
 
 ## What is next
 
-Committed-but-unbuilt work — currently a decision on the duplicated
-verification-command list — is listed in
+The ordered next steps — trial the evidence-appraisal profile in another Grade B
+repository, use the trade-study template only for a material choice, then revisit
+the duplicated verification-command list — live in
 [`docs/current-state.md`](docs/current-state.md) under "What is next".
 
 ## License

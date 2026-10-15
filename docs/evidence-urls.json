@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "description": "Machine-readable evidence index. Every source cited by a decision is registered here with a verification date. scripts/verify_urls.py checks each entry's HTTP status and required text; scripts/standards_check.py requires that every decision source is registered.",
   "urls": [
     {
@@ -295,6 +295,26 @@
       "source_section": "docs/research/consulting.md",
       "domain_tag": "research-consultation",
       "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Evidence-Based Software Engineering Guidelines Revisited",
+      "url": "https://doi.org/10.1109/TSE.2025.3526730",
+      "expected_statuses": [202],
+      "source_section": "docs/research/index.md",
+      "domain_tag": "research-consultation",
+      "source_type": "academic",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Credible evidence in software engineering",
+      "url": "https://doi.org/10.1016/j.infsof.2021.106555",
+      "expected_statuses": [200],
+      "source_section": "docs/research/index.md",
+      "domain_tag": "research-consultation",
+      "source_type": "academic",
       "status": "active",
       "last_verified": "2026-10-15"
     },

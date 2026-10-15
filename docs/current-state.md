@@ -74,11 +74,23 @@ Last reviewed: 2026-10-15.
   human README and agent instructions. Behaviour-changing choices record scope,
   applicability, limitations, and a recheck trigger; material multi-option
   choices also record alternatives and consequences. (checked 2026-10-15)
+- An opt-in evidence-appraisal profile adds context, human appraisal, outcome
+  check, and minimum source sufficiency to a new behaviour-changing decision.
+  Its declared shape and official-source requirement are validator-enforced; a
+  Grade C trade-study template is available only for material multi-option
+  choices. (checked 2026-10-15)
 
 ## What is next
 
 Committed-but-unbuilt work, in the order it is worth doing:
 
+- Trial the evidence-appraisal profile in one additional Grade B repository and
+  record whether it improves review. Only then decide whether its field
+  presence should become universal rather than opt-in. (checked 2026-10-15)
+- Use the Grade C trade-study template on the first material multi-option
+  repository decision; add weights, a matrix, sensitivity analysis, evidence
+  hierarchy, or recommendation-strength labels only if that trial exposes a
+  failure the current template cannot prevent. (checked 2026-10-15)
 - Decide whether the verification-command list should be sourced from one place
   across the README, the hooks, and CI. Cross-surface drift is now **detected**
   (the validator reports a command the executed surfaces run but the README does
@@ -93,8 +105,9 @@ Committed-but-unbuilt work, in the order it is worth doing:
   manifest, git-history freshness (a `verifiedCommit`-style field), scheduled
   freshness or URL monitors, mandatory cross-repository adoption, and any hosted
   or MCP-backed memory service. Source provenance and research linkage are
-  enforced; scoring evidence quality or trade-study weights remains human review
-  until a repository exhibits a failure that a mechanical rubric can prevent.
+  enforced; universal scoring evidence quality, trade-study weights, an evidence
+  hierarchy, and recommendation-strength labels remain human review until a
+  repository exhibits a failure that a mechanical rubric can prevent.
   (checked 2026-10-15)
 
 ## Known limits

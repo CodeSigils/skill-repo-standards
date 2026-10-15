@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 2.0 (draft).** This document is the single normative source for the
+**Version 2.1 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -117,6 +117,14 @@ record trustworthy and findable.
   enabled by at least one research entry. This preserves incremental adoption
   for repositories without a ledger while preventing a parseable ledger from
   silently losing its evidence trail.
+- **Evidence-appraisal profile.** A behaviour-changing decision SHOULD use the
+  structured profile in `docs/research/evidence-appraisal.md`: context,
+  evidence appraisal, outcome check, and evidence profile. When a decision
+  declares that profile, all four fields MUST be non-empty. Profile `primary`
+  MUST cite at least one registered `official_docs` source; profile
+  `constrained` MUST explain why a primary source was unavailable. The profile
+  records a maintainer's appraisal; the validator checks its provenance and
+  shape, not whether the judgment is true.
 - **One owner of truth.** Truth has two owners, and they do not cross.
   `docs/current-state.md` owns what is true about the *repository* now; the
   runtime payload (`SKILL.md` and its `references/`) owns what an *installed*
@@ -154,6 +162,15 @@ shapes, add an `Enables` link for every decision ID and remove duplicate decisio
 IDs. A repository without a recognised research register remains adoptable and
 receives an advisory finding; it is not required to invent a ledger merely to
 pass this standard.
+
+### 2.1 migration
+
+Version 2.1 adds a compatible evidence-appraisal profile for new
+behaviour-changing decisions. Existing immutable records do not need to be
+rewritten. A new record that opts into the profile must supply all its fields;
+use `constrained` only with a primary-source exception. A material multi-option
+decision MAY use the Grade C trade-study template before adopting any scoring
+control.
 
 ## Change lifecycle
 
@@ -237,6 +254,15 @@ them until drift has been observed:
 - mandatory adoption across all repositories,
 - any MCP-backed or hosted memory service.
 
+## Grade C: material-decision trade studies
+
+Use [`docs/research/trade-study.md`](docs/research/trade-study.md) only when a
+decision has multiple viable alternatives and material cost, risk, or
+irreversibility. The template records objectives, alternatives, criteria,
+assessment, stakeholders, the selected option, and an outcome check. It does
+not make weighted scoring or sensitivity analysis universal requirements; add
+them only when the decision's failure mode warrants them.
+
 ## The reference validator
 
 This repository ships `scripts/standards_check.py`. It checks only what is
@@ -258,23 +284,25 @@ It verifies:
    directory name);
 2. the decision schema — required fields, an allowed status, an ISO date for
    `Decided`, at least one source URL, a non-empty `Recheck`, and a rationale;
-3. evidence registration — every decision source URL is present in the evidence
+3. an opted-in evidence-appraisal profile — complete fields, a registered
+   official source for `primary`, or an explicit exception for `constrained`;
+4. evidence registration — every decision source URL is present in the evidence
    index;
-4. freshness — every `last_verified` date parses and is within the maximum age;
-5. evidence index hygiene — a `version` and a `description` are present;
-6. the payload boundary — no file under `skills/` links outside its own skill
+5. freshness — every `last_verified` date parses and is within the maximum age;
+6. evidence index hygiene — a `version` and a `description` are present;
+7. the payload boundary — no file under `skills/` links outside its own skill
    directory;
-7. the recognised research register — unique `R-###` ids, a parseable check
+8. the recognised research register — unique `R-###` ids, a parseable check
    date, a matching body section, at least one registered source URL, and
    `Enables` targets that name a declared decision;
-8. the recognised research-to-decision edge — every decision is enabled by at
+9. the recognised research-to-decision edge — every decision is enabled by at
    least one research entry, and every declared decision ID is unique;
-9. the standard's own document — a `**Version` marker, a `## Normative language`
+10. the standard's own document — a `**Version` marker, a `## Normative language`
    section, and a `## Standard lifecycle` section, when a `STANDARD.md` is
    present;
-10. the review cadence — `docs/current-state.md` carries a parseable
+11. the review cadence — `docs/current-state.md` carries a parseable
     `Last reviewed:` date within the maximum age;
-11. the cross-surface consistency of commands — a script a hook or workflow
+12. the cross-surface consistency of commands — a script a hook or workflow
     executes is documented in the README verification block.
 
 The decision identifier is **soft**, so a repository can begin with an
@@ -308,4 +336,5 @@ point for the next reader, not proof.
       `docs/evidence-urls.json`; the research-once protocol with a proportionate
       evidence appraisal; traceable recognised research evidence; one owner of
       truth; the canonical-owner rule.
-- [ ] **Grade C** — each additional control names the failure mode it prevents.
+- [ ] **Grade C** — each additional control names the failure mode it prevents;
+      a material multi-option decision may use the trade-study template.

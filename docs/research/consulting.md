@@ -26,9 +26,12 @@ only the query order and concern map; it must not become a second source list.
 Before a behaviour-changing decision, state the question and scope, compare the
 source's authority and applicability to the repository, name material
 limitations, and record the recheck trigger. For a material multi-option choice,
-record the alternatives and consequences in the decision rationale. The
-validator enforces source provenance, freshness, and the research-to-decision
-link; it deliberately cannot score the truth or weight of prose evidence.
+record the alternatives and consequences in the decision rationale. Use the
+[evidence-appraisal profile](evidence-appraisal.md) for a new
+behaviour-changing decision, and the [trade-study template](trade-study.md)
+only when its materiality warrants it. The validator enforces source
+provenance, freshness, the research-to-decision link, and an opted-in profile's
+shape; it deliberately cannot score the truth or weight of prose evidence.
 
 ## Concern map
 
@@ -37,6 +40,7 @@ link; it deliberately cannot score the truth or weight of prose evidence.
 | Research-first, evidence-baked decisions | `research-consultation` | R-019 and D22 | a primary source changes or a new consultation flow is proposed |
 | Repository security, secrets, and ignore rules | `repository-security` | R-019 and D22 | GitHub changes the guidance or the target uses another hosting platform |
 | Evidence appraisal and material trade studies | `research-consultation` | R-020 and D23 | a decision needs a multi-option comparison or its evidence changes |
+| Evidence-appraisal profile and source sufficiency | `research-consultation` | R-021 and D24 | a profile is incomplete or a primary source is unavailable |
 
 Use the concern map to locate sources, not to apply a generic policy. The target
 repository owns the decision and may have a narrower scope.

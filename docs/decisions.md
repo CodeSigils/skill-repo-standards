@@ -437,3 +437,25 @@ consultation guide requires alternatives and consequences in the rationale;
 scoring evidence quality or trade-study weights stays human review because the
 validator cannot determine their truth and no observed failure justifies a
 mechanical rubric.
+
+## Decision: Add an evidence-appraisal profile and scoped trade-study template
+
+- ID: D24
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://ebse.webspace.durham.ac.uk/ , https://doi.org/10.1109/TSE.2025.3526730 , https://doi.org/10.1016/j.infsof.2021.106555 , https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle , https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html , https://ops.fhwa.dot.gov/seits/sections/section3/3_4_5.html
+- Recheck: after one additional Grade B adopter has used the profile, or when a material multi-option decision demonstrates a need for weighted scoring or evidence-strength labels
+- Context: whether the next improvement should enforce a universal evidence score, or record a compact human appraisal with provenance
+- Evidence appraisal: EBSE and credible-evidence guidance support explicit validity, impact, applicability, and fit-for-purpose reasoning; AWS and FHWA support context, consequences, alternatives, and outcome validation. Automated field checks can establish provenance but cannot establish the truth of that reasoning.
+- Outcome check: review a real adopter's profile for completeness and usability before deciding whether its field-presence rule becomes universal; run the profile corpus fixture on every validator change.
+- Evidence profile: primary
+
+Rationale: the standard already records sources, rationale, and recheck triggers,
+but did not distinguish primary-source sufficiency from a generic URL or make an
+outcome check explicit. The new profile adds those fields for a new
+behaviour-changing decision and hard-validates its declared shape. `primary`
+requires a registered official source, while `constrained` requires a recorded
+exception. The existing records remain immutable and are not retrofitted with
+invented appraisals. The Grade C trade-study template covers material choices
+without requiring weights, scoring, sensitivity analysis, an evidence hierarchy,
+or recommendation-strength labels where no observed failure justifies them.

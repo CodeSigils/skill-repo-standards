@@ -61,6 +61,8 @@ SPINE_FILES = ("README.md", "SECURITY.md")
 # The decision identifier is checked separately because it is a soft rule: a
 # repository can record decisions without IDs and still adopt the spine.
 DECISION_FIELDS = ("Status", "Decided", "Sources", "Recheck")
+APPRAISAL_FIELDS = ("Context", "Evidence appraisal", "Outcome check", "Evidence profile")
+EVIDENCE_PROFILES = ("primary", "constrained")
 FRONTMATTER_NAME_RE = re.compile(r"(?m)^name:\s*(?P<name>.+?)\s*$")
 REVIEWED_RE = re.compile(r"(?m)^Last reviewed:\s*(?P<date>\d{4}-\d{2}-\d{2})")
 SCRIPT_REF_RE = re.compile(r"(?:python3|python)\s+(?P<path>[\w./-]+\.py)")
@@ -149,6 +151,27 @@ def registered_urls(root: Path) -> set[str]:
     }
 
 
+def registered_source_types(root: Path) -> dict[str, str]:
+    """Return the registered source type keyed by normalized URL."""
+    text = _read_path(root / "docs" / "evidence-urls.json")
+    if text is None:
+        return {}
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        return {}
+    entries = data.get("urls") if isinstance(data, dict) else None
+    if not isinstance(entries, list):
+        return {}
+    return {
+        normalize_url(entry["url"]): entry["source_type"]
+        for entry in entries
+        if isinstance(entry, dict)
+        and isinstance(entry.get("url"), str)
+        and isinstance(entry.get("source_type"), str)
+    }
+
+
 def research_blocks(text: str) -> dict[str, str]:
     """Return each recognised research entry body keyed by its R identifier."""
     matches = list(RESEARCH_BODY_RE.finditer(text))
@@ -179,6 +202,7 @@ def check_decisions(root: Path) -> list[Finding]:
         )
 
     registered = registered_urls(root)
+    source_types = registered_source_types(root)
 
     for title, block in blocks:
         for field in DECISION_FIELDS:
@@ -226,6 +250,39 @@ def check_decisions(root: Path) -> list[Finding]:
                     hard(
                         f"decision '{title}' cites an unregistered source '{url}' "
                         "(add it to docs/evidence-urls.json)"
+                    )
+                )
+
+        profile = decision_field(block, "Evidence profile")
+        if profile:
+            for field in APPRAISAL_FIELDS:
+                if not decision_field(block, field):
+                    findings.append(
+                        hard(
+                            f"decision '{title}' declares an evidence profile but "
+                            f"is missing a non-empty {field} field"
+                        )
+                    )
+            if profile not in EVIDENCE_PROFILES:
+                findings.append(
+                    hard(
+                        f"decision '{title}' has evidence profile '{profile}' "
+                        f"(allowed: {', '.join(EVIDENCE_PROFILES)})"
+                    )
+                )
+            elif profile == "primary":
+                if not any(source_types.get(normalize_url(url)) == "official_docs" for url in sources):
+                    findings.append(
+                        hard(
+                            f"decision '{title}' has evidence profile 'primary' but "
+                            "cites no registered official_docs source"
+                        )
+                    )
+            elif not decision_field(block, "Primary-source exception"):
+                findings.append(
+                    hard(
+                        f"decision '{title}' has evidence profile 'constrained' but "
+                        "is missing a non-empty Primary-source exception field"
                     )
                 )
 
@@ -586,6 +643,7 @@ def _valid_fixture(root: Path) -> None:
                         "name": "Example",
                         "url": "https://example.com/docs/",
                         "expected_statuses": [200],
+                        "source_type": "official_docs",
                         "last_verified": "2026-10-15",
                     }
                 ],
@@ -662,6 +720,26 @@ def run_self_test() -> int:
             "unregistered source",
             "docs/decisions.md",
             decisions.replace("https://example.com/docs/", "https://unregistered.example/x"),
+        ):
+            return 1
+        profile_decision = decisions.replace(
+            "- Recheck: never\n\n",
+            "- Recheck: never\n"
+            "- Context: fixture validation\n"
+            "- Evidence appraisal: the registered official source is applicable\n"
+            "- Outcome check: the fixture stays clean\n"
+            "- Evidence profile: primary\n\n",
+        )
+        if not assert_hard(
+            "constrained evidence profile without exception",
+            "docs/decisions.md",
+            profile_decision.replace("Evidence profile: primary", "Evidence profile: constrained"),
+        ):
+            return 1
+        if not assert_hard(
+            "evidence profile missing outcome check",
+            "docs/decisions.md",
+            profile_decision.replace("- Outcome check: the fixture stays clean\n", ""),
         ):
             return 1
 

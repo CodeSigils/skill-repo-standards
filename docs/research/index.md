@@ -30,6 +30,7 @@ that the underlying source has not changed since.
 | R-018 | Whether a corpus must exercise every check the validator performs, so a regression in an unchecked branch cannot pass in silence | Complete | 2026-10-15 | D21 |
 | R-019 | Whether recurring concerns need a standalone, concern-oriented consultation path so official guidance is located before a project decision | Complete | 2026-10-15 | D22 |
 | R-020 | Which evidence-first controls are enforceable in a proportionate skill-repository standard | Complete | 2026-10-15 | D23 |
+| R-021 | Which evidence-appraisal, source-sufficiency, and material-trade-study controls improve decisions without inventing a universal score | Complete | 2026-10-15 | D24 |
 
 ## R-001 — Specification plus validator
 
@@ -356,6 +357,34 @@ rubric would improve the result. A material multi-option choice is instead
 guided to record alternatives and consequences in its rationale.
 
 Sources: https://ebse.webspace.durham.ac.uk/ ,
+https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle ,
+https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html ,
+https://ops.fhwa.dot.gov/seits/sections/section3/3_4_5.html
+
+## R-021 — Structured appraisal without a universal evidence score
+
+The 2025 EBSE guidelines revisit the need for guidance that reflects changed
+software practice. The credible-evidence framework describes validity,
+relevance, and fit-for-purpose as distinct concerns, and warns consumers not to
+repeat claims without evaluating their credibility. EBSE's five-stage process
+requires appraisal of validity, impact, and applicability, integration with
+stakeholder circumstances, and review of effectiveness. AWS ADR guidance adds
+context and consequences; FHWA trade studies add alternatives, criteria, and
+validation of a material choice.
+
+The smallest justified control is an opt-in profile for new behaviour-changing
+decisions: context, a human evidence appraisal, an outcome check, and a source
+sufficiency declaration. A `primary` profile requires an official source; a
+`constrained` profile records why one is unavailable. This makes missing fields
+and source provenance machine-checkable without pretending that an automated
+score can establish evidence quality. A Grade C trade-study template is supplied
+for material multi-option choices. Evidence hierarchy, recommendation strength,
+universal weights, and sensitivity scoring remain deferred: no observed failure
+shows that their universal enforcement would improve this repository class.
+
+Sources: https://ebse.webspace.durham.ac.uk/ ,
+https://doi.org/10.1109/TSE.2025.3526730 ,
+https://doi.org/10.1016/j.infsof.2021.106555 ,
 https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle ,
 https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html ,
 https://ops.fhwa.dot.gov/seits/sections/section3/3_4_5.html

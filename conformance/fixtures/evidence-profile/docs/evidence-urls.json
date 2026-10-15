@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "description": "Official-source evidence fixture for the conformance corpus.",
+  "urls": [
+    {
+      "name": "Official fixture source",
+      "url": "https://example.invalid/official",
+      "expected_statuses": [200],
+      "required_text": ["official"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "fixture",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "{{TODAY}}"
+    }
+  ]
+}
