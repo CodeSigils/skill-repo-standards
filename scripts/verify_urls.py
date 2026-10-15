@@ -17,10 +17,12 @@ Exit codes: 0 clean, 1 findings, 2 could not run.
 
 from __future__ import annotations
 
+import io
 import json
 import sys
 import urllib.error
 import urllib.request
+from email.message import Message
 from pathlib import Path
 from typing import Any
 
@@ -80,15 +82,29 @@ def classify_status(status: int, expected: list[int]) -> str:
     return "OK" if status in expected else "DRIFT"
 
 
+def http_error_status(exc: urllib.error.HTTPError) -> int:
+    """Return the status of an HTTP error; a non-2xx reply is a definite answer."""
+    return int(exc.code)
+
+
 def fetch(url: str, required_text: list[str] | None) -> tuple[int, int | str, str | None]:
-    """Return (status, content-code, note); a network failure raises URLError."""
+    """Return (status, content-code, note); only a transport failure raises URLError.
+
+    A non-2xx reply raises HTTPError, a URLError subclass. Its status is a
+    definite answer, so it is returned like any other status and classified as
+    drift rather than mistaken for an environmental failure.
+    """
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(request, timeout=30) as response:
-        status = response.status
-        if not required_text:
-            return status, 0, None
-        body = response.read().decode("utf-8", errors="replace")
-        return status, check_required_text(body, required_text), None
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            status = response.status
+            if not required_text:
+                return status, 0, None
+            body = response.read().decode("utf-8", errors="replace")
+            return status, check_required_text(body, required_text), None
+    except urllib.error.HTTPError as exc:
+        with exc:
+            return http_error_status(exc), 0, None
 
 
 def run_live(entries: list[dict[str, Any]]) -> int:
@@ -125,12 +141,17 @@ def run_live(entries: list[dict[str, Any]]) -> int:
 
 def run_self_test() -> int:
     """Offline, deterministic assertions over the parsing and comparison helpers."""
+    error = urllib.error.HTTPError(
+        "https://example.invalid/", 404, "Not Found", Message(), io.BytesIO(b"")
+    )
     cases = [
         (check_required_text("hello world", ["world"]), "ANCHORS_OK"),
         (check_required_text("hello", ["world"]), "MISSING_ANCHOR"),
         (classify_status(200, [200]), "OK"),
         (classify_status(404, [200]), "DRIFT"),
+        (classify_status(http_error_status(error), [200]), "DRIFT"),
     ]
+    error.close()
     for observed, expected in cases:
         if observed != expected:
             print(f"FAIL: expected {expected}, observed {observed}", file=sys.stderr)
@@ -156,9 +177,18 @@ def main(argv: list[str]) -> int:
     except ValueError as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 2
-    for entry in entries:
+    problems = 0
+    for index, entry in enumerate(entries):
+        name = entry.get("name") if isinstance(entry, dict) else None
         for problem in validate_entry(entry):
-            print(f"FAIL: {entry.get('name', '<unnamed>')}: {problem}", file=sys.stderr)
+            print(f"FAIL: entry {index} ({name or 'unnamed'}): {problem}", file=sys.stderr)
+            problems += 1
+    if problems:
+        print(
+            "RESULT: the manifest has malformed entries; fix them before a live check.",
+            file=sys.stderr,
+        )
+        return 1
     return run_live(entries)
 
 

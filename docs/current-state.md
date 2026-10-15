@@ -30,6 +30,10 @@ Last reviewed: 2026-10-15.
 - A change lifecycle (research → finding → decision → implementation → check)
   whose research-to-decision edge is machine-enforced: every decision must be
   enabled by a research entry. (checked 2026-10-15)
+- Cross-surface consistency: a script a hook or workflow executes but the README
+  verification block does not document is reported as an advisory note, which
+  detects the drift a shared manifest would prevent without adopting one.
+  (checked 2026-10-15)
 - Normative language: `MUST`/`MUST NOT`/`SHOULD`/`MAY` are defined, `STANDARD.md`
   is the only normative document, and a conformance claim is an assertion until a
   passing check evidences it. (checked 2026-10-15)
@@ -57,9 +61,11 @@ Committed-but-unbuilt work, in the order it is worth doing:
   a known grade shape, so a claimed grade can be checked rather than only
   asserted. The validator's `--self-test` fixtures are the seed. (checked 2026-10-15)
 - Decide whether the verification-command list should be sourced from one place
-  across the README, the hooks, and CI. The list is duplicated today; a shared
-  stage manifest stays deferred per `STANDARD.md` §Deferred controls until a
-  verification command is actually observed to drop from one surface. See
+  across the README, the hooks, and CI. Cross-surface drift is now **detected**
+  (the validator reports a command the executed surfaces run but the README does
+  not document; see `docs/decisions.md` D18), but the list is still duplicated. A
+  shared stage manifest stays deferred per `STANDARD.md` §Deferred controls until
+  a verification command is actually observed to drop from one surface. See
   `docs/decisions.md` D16. (checked 2026-10-15)
 
 ## What is deliberately deferred

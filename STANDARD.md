@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 1.2 (draft).** This document is the single normative source for the
+**Version 1.3 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -244,7 +244,9 @@ It verifies:
    section, and a `## Standard lifecycle` section, when a `STANDARD.md` is
    present;
 10. the review cadence — `docs/current-state.md` carries a parseable
-    `Last reviewed:` date within the maximum age.
+    `Last reviewed:` date within the maximum age;
+11. the cross-surface consistency of commands — a script a hook or workflow
+    executes is documented in the README verification block.
 
 Two rules are **soft** rather than hard: the decision identifier and the
 research-to-decision edge. A repository that deliberately keeps no research

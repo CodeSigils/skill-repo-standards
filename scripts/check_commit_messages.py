@@ -18,6 +18,7 @@ from __future__ import annotations
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 SUBJECT_RE = re.compile(
     r"^(feat|fix|docs|chore|ci|refactor|test|build|perf|style|revert)"
@@ -30,8 +31,6 @@ CLOSING_KEYWORD_RE = re.compile(
 
 def read_message(target: str) -> tuple[str | None, int]:
     """Return (message, exit-code); the message is None when it cannot be read."""
-    from pathlib import Path
-
     path = Path(target)
     if path.is_file():
         try:

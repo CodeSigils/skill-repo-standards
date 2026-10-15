@@ -62,6 +62,7 @@ SPINE_FILES = ("README.md", "SECURITY.md")
 DECISION_FIELDS = ("Status", "Decided", "Sources", "Recheck")
 FRONTMATTER_NAME_RE = re.compile(r"(?m)^name:\s*(?P<name>.+?)\s*$")
 REVIEWED_RE = re.compile(r"(?m)^Last reviewed:\s*(?P<date>\d{4}-\d{2}-\d{2})")
+SCRIPT_REF_RE = re.compile(r"(?:python3|python)\s+(?P<path>[\w./-]+\.py)")
 
 
 def normalize_url(url: str) -> str:
@@ -455,6 +456,53 @@ def check_payload_boundary(root: Path) -> list[Finding]:
     return findings
 
 
+def check_consistency(root: Path) -> list[Finding]:
+    """Flag a script a hook or workflow runs that the README does not document.
+
+    This detects the drift a shared manifest would also prevent, without
+    introducing one: a gate is added to CI or a hook and no reader can see it in
+    the documented verification list. Only the executed-but-undocumented
+    direction is reported, so a documented command that is deliberately not run
+    (for example a network check kept out of the default suite) is not a finding.
+    """
+    readme = _read_path(root / "README.md")
+    if readme is None:
+        return []
+
+    executed: list[str] = []
+    hooks_dir = root / ".githooks"
+    if hooks_dir.is_dir():
+        for hook in sorted(child for child in hooks_dir.iterdir() if child.is_file()):
+            text = _read_path(hook)
+            if text is not None:
+                executed.append(text)
+    workflows_dir = root / ".github" / "workflows"
+    if workflows_dir.is_dir():
+        for workflow in sorted(workflows_dir.glob("*.y*ml")):
+            text = _read_path(workflow)
+            if text is not None:
+                executed.append(text)
+
+    if not executed:
+        return []
+
+    documented = {match.group("path") for match in SCRIPT_REF_RE.finditer(readme)}
+    findings: list[Finding] = []
+    seen: set[str] = set()
+    for text in executed:
+        for path in SCRIPT_REF_RE.findall(text):
+            if path in seen or path in documented:
+                continue
+            seen.add(path)
+            findings.append(
+                soft(
+                    f"a hook or workflow runs '{path}', which no README verification "
+                    "block documents"
+                )
+            )
+    return findings
+
+
 def check_target(root: Path, today: dt.date, max_age_days: int) -> list[Finding]:
     """Run every check and return the combined findings."""
     findings: list[Finding] = []
@@ -464,6 +512,7 @@ def check_target(root: Path, today: dt.date, max_age_days: int) -> list[Finding]
     findings += check_research(root)
     findings += check_evidence_index(root, today, max_age_days)
     findings += check_payload_boundary(root)
+    findings += check_consistency(root)
     return findings
 
 
@@ -673,6 +722,13 @@ def run_self_test() -> int:
             "decisions file in an unrecognised shape",
             "docs/decisions.md",
             "# Decisions\n\n## Methodology over checklist\n\n**Decision:** prose.\n",
+        ):
+            return 1
+
+        if not assert_soft(
+            "gate not documented in the README",
+            ".githooks/pre-push",
+            "#!/bin/sh\npython3 scripts/undeclared.py\n",
         ):
             return 1
 

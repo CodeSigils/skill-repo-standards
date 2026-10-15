@@ -298,3 +298,23 @@ unbuilt work needs one discoverable place for both audiences, and a second
 forward-looking document would be another rot surface. The explanation therefore
 lives in the README, and the next steps live as `## What is next` in the mutable
 current-state document, which already owns "now".
+
+## Decision: Detect cross-surface drift and stop masking a definite HTTP status
+
+- ID: D18
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://continuous-architecture.org/practices/fitness-functions
+- Recheck: if the verification-command list is sourced from one place, or a shared manifest stops being deferred
+
+Rationale: A review found the same class of gap the standard exists to prevent. A
+script a hook or workflow executes could be absent from the README verification
+block with nothing to notice it, so the review added a soft cross-surface check
+(`check_consistency`) that reports a command the executed surfaces run but the
+README does not document — detection without introducing the deferred shared
+manifest. Separately, the URL verifier caught `urllib.error.HTTPError` (a
+`URLError` subclass) with its transport-failure handler, so a source returning a
+new status such as 404 was reported as an environmental could-not-run (exit 2)
+instead of drift (exit 1), and a malformed manifest printed failures yet exited 0.
+A check must fail on the condition it names and must not soften a definite finding
+into "could not check"; both are now fixed.

@@ -24,6 +24,7 @@ that the underlying source has not changed since.
 | R-012 | Whether truth needs one owner, and which document owns repository facts versus installed behaviour | Complete | 2026-10-15 | D15 |
 | R-013 | Whether a verification-command list duplicated across the README, the hooks, and CI warrants a shared manifest now | Complete | 2026-10-15 | D16 |
 | R-014 | Whether the standard should explain its relationship to the established practice families and publish a next-steps list | Complete | 2026-10-15 | D17 |
+| R-015 | Whether a gate can be added to a hook or workflow without the README documenting it, and whether a definite HTTP status must not be mistaken for an environmental failure | Complete | 2026-10-15 | D18 |
 
 ## R-001 — Specification plus validator
 
@@ -199,3 +200,16 @@ discoverable place for both audiences, and a second forward-looking document wou
 be another rot surface. Recorded as the basis for a front-door explanation in the
 README and a `## What is next` section in the mutable current-state document.
 Sources: https://agents.md/ , https://llmstxt.org/
+
+## R-015 — Documented gates and definite HTTP statuses
+
+A repository can add a gate to a hook or a workflow and never add it to the
+README verification block, so a reader cannot see what actually runs. And a URL
+check that treats any non-2xx reply as an environmental failure hides a definite
+drift behind a "could not check". Both are the failure the anti-rot core exists to
+catch — a machine-checkable fact that no check treats as a finding. The
+proportionate response is detection, not a new manifest: a soft cross-surface
+check, and classifying a definite HTTP status as drift rather than as an
+environmental error. Recorded as the basis for the cross-surface check and the
+`HTTPError`-aware URL verifier.
+Sources: https://continuous-architecture.org/practices/fitness-functions
