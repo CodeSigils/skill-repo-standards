@@ -20,7 +20,8 @@ Before changing anything, read:
 
 ## Before re-researching
 
-Follow the research-once protocol in `STANDARD.md`. Search `docs/decisions.md`,
+Follow the research-once protocol in `STANDARD.md` through the canonical
+[`docs/research/consulting.md`](docs/research/consulting.md) guide. Search `docs/decisions.md`,
 `docs/evidence-urls.json`, and `docs/research/index.md` before performing new
 research. Reuse a recorded decision when its scope and freshness fit; revalidate
 volatile facts at the point of use; record whether the result was reused,

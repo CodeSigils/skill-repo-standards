@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 1.6 (draft).** This document is the single normative source for the
+**Version 2.0 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -105,8 +105,18 @@ record trustworthy and findable.
   decision log, the evidence index, and the research record. Reuse an existing
   entry whose scope and freshness fit; revalidate volatile, version-sensitive,
   or decision-critical facts at the point of use; and record whether the result
-  was reused, revalidated, superseded, or newly discovered. Do not silently
-  repeat a search.
+  was reused, revalidated, superseded, or newly discovered. For a
+  behaviour-changing choice, record the question and scope, source
+  applicability, material limitations, and a recheck trigger in the research
+  finding or decision. For a material multi-option choice, record the
+  alternatives and consequences. Do not silently repeat a search.
+- **Traceable research evidence.** A recognised `R-###` entry MUST have a body
+  section with at least one source URL, and every source URL in that body MUST be
+  registered in `docs/evidence-urls.json`. When both the research register and
+  decision log are in recognised shapes, every declared decision ID MUST be
+  enabled by at least one research entry. This preserves incremental adoption
+  for repositories without a ledger while preventing a parseable ledger from
+  silently losing its evidence trail.
 - **One owner of truth.** Truth has two owners, and they do not cross.
   `docs/current-state.md` owns what is true about the *repository* now; the
   runtime payload (`SKILL.md` and its `references/`) owns what an *installed*
@@ -135,6 +145,15 @@ everything else: a change to it is a decision, not an edit in place.
 - **Review cadence.** This document, the deferred list, and every source in
   `docs/evidence-urls.json` are reviewed at least twice a year. The review date
   lives in `docs/current-state.md` and is enforced by the validator.
+
+### 2.0 migration
+
+Version 2.0 makes recognised research records stricter. For each `R-###` body,
+add at least one registered source URL. When both records use the recognised
+shapes, add an `Enables` link for every decision ID and remove duplicate decision
+IDs. A repository without a recognised research register remains adoptable and
+receives an advisory finding; it is not required to invent a ledger merely to
+pass this standard.
 
 ## Change lifecycle
 
@@ -245,10 +264,11 @@ It verifies:
 5. evidence index hygiene — a `version` and a `description` are present;
 6. the payload boundary — no file under `skills/` links outside its own skill
    directory;
-7. the research register — unique `R-###` ids, a parseable check date, a
-   matching body section, and `Enables` targets that name a declared decision;
-8. the research-to-decision edge — every decision is enabled by at least one
-   research entry;
+7. the recognised research register — unique `R-###` ids, a parseable check
+   date, a matching body section, at least one registered source URL, and
+   `Enables` targets that name a declared decision;
+8. the recognised research-to-decision edge — every decision is enabled by at
+   least one research entry, and every declared decision ID is unique;
 9. the standard's own document — a `**Version` marker, a `## Normative language`
    section, and a `## Standard lifecycle` section, when a `STANDARD.md` is
    present;
@@ -257,15 +277,14 @@ It verifies:
 11. the cross-surface consistency of commands — a script a hook or workflow
     executes is documented in the README verification block.
 
-Two rules are **soft** rather than hard: the decision identifier and the
-research-to-decision edge. A repository that deliberately keeps no research
-ledger can still adopt the standard and the hard rules, and see the gap as an
-advisory note instead of a failure. The accepted shapes are deliberately wide: a
-multi-skill payload, a decision log under any of the common ADR headings, and a
-research register or decision log in a shape the validator does not recognise,
-are all reported as advisory notes rather than failures. A shape mismatch is
-advisory; a substantive breach — a recognised entry with no status, no date, an
-unregistered source, or no rationale — stays hard.
+The decision identifier is **soft**, so a repository can begin with an
+unidentified decision log. An absent or unrecognised research register is also
+advisory, preserving incremental adoption. The accepted shapes are deliberately
+wide: a multi-skill payload, a decision log under any of the common ADR headings,
+and a research register or decision log in a shape the validator does not
+recognise are all reported as advisory notes rather than failures. Once both
+records are recognised, however, a missing research source, duplicate decision
+ID, or unenabled decision is a substantive breach and stays hard.
 
 A companion check, `scripts/check_conformance.py`, runs the validator against
 the checked-in fixtures under `conformance/` and compares each fixture's exit
@@ -286,6 +305,7 @@ point for the next reader, not proof.
       contract; SHA-pinned, least-privilege automation.
 - [ ] **Grade B** — `docs/current-state.md` (mutable, dated) split from
       `docs/research/index.md` (append-only); `docs/decisions.md`; a registered
-      `docs/evidence-urls.json`; the research-once protocol; one owner of truth;
-      the canonical-owner rule.
+      `docs/evidence-urls.json`; the research-once protocol with a proportionate
+      evidence appraisal; traceable recognised research evidence; one owner of
+      truth; the canonical-owner rule.
 - [ ] **Grade C** — each additional control names the failure mode it prevents.

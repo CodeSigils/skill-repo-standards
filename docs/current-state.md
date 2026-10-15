@@ -28,8 +28,10 @@ Last reviewed: 2026-10-15.
   about this repository, and the runtime payload owns what an installed skill
   does; a payload is kept from linking into `docs/`. (checked 2026-10-15)
 - A change lifecycle (research → finding → decision → implementation → check)
-  whose research-to-decision edge is machine-enforced: every decision must be
-  enabled by a research entry. (checked 2026-10-15)
+  whose recognised research-to-decision edge is machine-enforced: every
+  recognised research body cites registered evidence, every decision has an
+  unambiguous ID, and every decision is enabled by a research entry when both
+  records are parseable. (checked 2026-10-15)
 - Cross-surface consistency: a script a hook or workflow executes but the README
   verification block does not document is reported as an advisory note, which
   detects the drift a shared manifest would prevent without adopting one.
@@ -68,7 +70,10 @@ Last reviewed: 2026-10-15.
   failure mode. (checked 2026-10-15)
 - A standalone research consultation guide maps recurring concerns to the
   evidence registry and the records that support each decision; it can be used
-  without a personal lab or any other repository. (checked 2026-10-15)
+  without a personal lab or any other repository, and is linked from both the
+  human README and agent instructions. Behaviour-changing choices record scope,
+  applicability, limitations, and a recheck trigger; material multi-option
+  choices also record alternatives and consequences. (checked 2026-10-15)
 
 ## What is next
 
@@ -84,10 +89,12 @@ Committed-but-unbuilt work, in the order it is worth doing:
 
 ## What is deliberately deferred
 
-- Control-justification ledger, claim-evidence matrix, shared stage manifest,
-  git-history freshness (a `verifiedCommit`-style field), scheduled freshness or
-  URL monitors, mandatory cross-repository adoption, and any hosted or
-  MCP-backed memory service. Each is deferred until drift is observed.
+- Control-justification ledger, a scored claim-evidence matrix, shared stage
+  manifest, git-history freshness (a `verifiedCommit`-style field), scheduled
+  freshness or URL monitors, mandatory cross-repository adoption, and any hosted
+  or MCP-backed memory service. Source provenance and research linkage are
+  enforced; scoring evidence quality or trade-study weights remains human review
+  until a repository exhibits a failure that a mechanical rubric can prevent.
   (checked 2026-10-15)
 
 ## Known limits

@@ -29,6 +29,7 @@ that the underlying source has not changed since.
 | R-017 | Whether a claimed conformance grade should be backed by a checked-in corpus that proves the validator behaves correctly across known shapes | Complete | 2026-10-15 | D20 |
 | R-018 | Whether a corpus must exercise every check the validator performs, so a regression in an unchecked branch cannot pass in silence | Complete | 2026-10-15 | D21 |
 | R-019 | Whether recurring concerns need a standalone, concern-oriented consultation path so official guidance is located before a project decision | Complete | 2026-10-15 | D22 |
+| R-020 | Which evidence-first controls are enforceable in a proportionate skill-repository standard | Complete | 2026-10-15 | D23 |
 
 ## R-001 — Specification plus validator
 
@@ -335,3 +336,26 @@ https://docs.github.com/en/get-started/git-basics/ignoring-files ,
 https://docs.github.com/en/enterprise-cloud%40latest/repositories/creating-and-managing-repositories/best-practices-for-repositories ,
 https://docs.github.com/en/code-security/how-tos/secure-your-secrets/work-with-leak-prevention/push-protection-on-the-command-line ,
 https://github.com/github/gitignore
+
+## R-020 — Proportionate enforcement of evidence-first decisions
+
+Evidence-Based Software Engineering requires an answerable question, the best
+available evidence, critical appraisal, and a decision integrated with local
+judgment. GOV.UK's assurance model makes the chain explicit: signals and
+metrics become evidence, assertions, and decisions; evidence is perishable.
+AWS ADR guidance requires a context, decision, and consequences in an immutable
+record. FHWA trade studies add alternatives and objective comparison when a
+choice is material and has multiple options.
+
+For this standard, source provenance, check dates, unique identifiers, and the
+research-to-decision link are objective repository facts, so they are
+machine-enforced once both records use the recognised shapes. Appraisal quality,
+stakeholder judgment, and trade-study weights remain human review: the validator
+cannot assess their truth, and no repository failure shows that a mechanical
+rubric would improve the result. A material multi-option choice is instead
+guided to record alternatives and consequences in its rationale.
+
+Sources: https://ebse.webspace.durham.ac.uk/ ,
+https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle ,
+https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html ,
+https://ops.fhwa.dot.gov/seits/sections/section3/3_4_5.html

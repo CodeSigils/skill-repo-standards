@@ -191,7 +191,7 @@ every registered evidence source at least twice a year.
 ## Decision: Grade validator findings by severity
 
 - ID: D12
-- Status: accepted
+- Status: superseded
 - Decided: 2026-10-15
 - Sources: https://continuous-architecture.org/practices/fitness-functions , https://docs.thally.io/guides/provenance
 - Recheck: if every adopting repository keeps a research ledger, so the two soft rules could become hard
@@ -206,7 +206,9 @@ standard, see the gap, and record it rather than be blocked by it. Fitness-
 function practice keeps a finding visible without disabling the check, and
 provenance guidance keeps an open gap reported rather than hidden. The two rules
 downgraded here are the research-to-decision edge and the decision identifier;
-every structural, schema, date, and boundary finding stays hard.
+every structural, schema, date, and boundary finding stays hard. The recognised-
+record evidence and research-to-decision requirements are superseded by D23;
+absent or unrecognised research records remain advisory.
 
 ## Decision: Accept the common shapes of the decision log and the research register
 
@@ -412,3 +414,26 @@ therefore ships `docs/research/consulting.md`: a small, standalone map from a
 concern to the existing decision log, evidence registry, and research record.
 The guide contains no duplicate evidence inventory and makes no claim that a
 personal lab is required, so the standard remains independently adoptable.
+
+## Decision: Enforce recognised research evidence and decision traceability
+
+- ID: D23
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://ebse.webspace.durham.ac.uk/ , https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle , https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html , https://ops.fhwa.dot.gov/seits/sections/section3/3_4_5.html
+- Recheck: if a recognised ledger shape gains an evidence field that is more reliable than its body, or a repository failure justifies a mechanical appraisal rubric
+
+Rationale: Evidence-first guidance agrees that a decision needs a scoped
+question, authoritative evidence, appraisal, and an accountable record. The
+existing research record already carries sources and a verification date, while
+the decision record carries a status, rationale, and recheck trigger; the gap
+was that a parseable record could cite no evidence, duplicate a decision ID, or
+leave a decision unenabled without failing validation. Those are objective
+traceability failures, so the validator now rejects them when both records use
+recognised shapes. This supersedes D12 only for recognised records: a repository
+without a ledger, or with a legitimate unrecognised shape, remains adoptable and
+receives an advisory finding. For a material multi-option decision, the
+consultation guide requires alternatives and consequences in the rationale;
+scoring evidence quality or trade-study weights stays human review because the
+validator cannot determine their truth and no observed failure justifies a
+mechanical rubric.

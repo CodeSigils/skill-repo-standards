@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "description": "Machine-readable evidence index. Every source cited by a decision is registered here with a verification date. scripts/verify_urls.py checks each entry's HTTP status and required text; scripts/standards_check.py requires that every decision source is registered.",
   "urls": [
     {
@@ -69,6 +69,17 @@
       "last_verified": "2026-10-15"
     },
     {
+      "name": "AWS architectural decision records process",
+      "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html",
+      "expected_statuses": [200],
+      "required_text": ["architectural decision records"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "decision-records",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
       "name": "log4brains decision log tooling",
       "url": "https://github.com/thomvaill/log4brains",
       "expected_statuses": [200],
@@ -76,6 +87,17 @@
       "source_section": "docs/decisions.md",
       "domain_tag": "decision-records",
       "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "FHWA Systems Engineering trade studies",
+      "url": "https://ops.fhwa.dot.gov/seits/sections/section3/3_4_5.html",
+      "expected_statuses": [200],
+      "required_text": ["Trade Studies"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "research-consultation",
+      "source_type": "official_docs",
       "status": "active",
       "last_verified": "2026-10-15"
     },

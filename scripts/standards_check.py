@@ -17,6 +17,7 @@ Exit codes follow the local check contract: 0 clean, 1 findings, 2 could not run
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import datetime as dt
 import json
 import re
@@ -129,6 +130,36 @@ def decision_ids(text: str | None) -> set[str]:
     return ids
 
 
+def registered_urls(root: Path) -> set[str]:
+    """Return the normalized URLs registered in the local evidence index."""
+    text = _read_path(root / "docs" / "evidence-urls.json")
+    if text is None:
+        return set()
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        return set()
+    entries = data.get("urls") if isinstance(data, dict) else None
+    if not isinstance(entries, list):
+        return set()
+    return {
+        normalize_url(entry["url"])
+        for entry in entries
+        if isinstance(entry, dict) and isinstance(entry.get("url"), str)
+    }
+
+
+def research_blocks(text: str) -> dict[str, str]:
+    """Return each recognised research entry body keyed by its R identifier."""
+    matches = list(RESEARCH_BODY_RE.finditer(text))
+    return {
+        match.group("id"): text[
+            match.end() : matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        ]
+        for index, match in enumerate(matches)
+    }
+
+
 def check_decisions(root: Path) -> list[Finding]:
     """Validate the decision schema, dates, sources, and registration."""
     path = root / "docs" / "decisions.md"
@@ -147,19 +178,7 @@ def check_decisions(root: Path) -> list[Finding]:
             )
         )
 
-    index_path = root / "docs" / "evidence-urls.json"
-    registered: set[str] = set()
-    index_text = _read_path(index_path)
-    if index_text is not None:
-        try:
-            data = json.loads(index_text)
-            entries = data.get("urls") if isinstance(data, dict) else None
-            if isinstance(entries, list):
-                for entry in entries:
-                    if isinstance(entry, dict) and isinstance(entry.get("url"), str):
-                        registered.add(normalize_url(entry["url"]))
-        except (json.JSONDecodeError, AttributeError):
-            pass
+    registered = registered_urls(root)
 
     for title, block in blocks:
         for field in DECISION_FIELDS:
@@ -215,8 +234,11 @@ def check_decisions(root: Path) -> list[Finding]:
 
     declared = [decision_field(block, "ID") for _title, block in blocks]
     present = [value for value in declared if value]
-    if len(present) != len(set(present)):
-        findings.append(soft("docs/decisions.md has duplicate decision IDs"))
+    for decision_id, count in sorted(Counter(present).items()):
+        if count > 1:
+            findings.append(
+                hard(f"docs/decisions.md has duplicate decision ID '{decision_id}'")
+            )
 
     return findings
 
@@ -251,16 +273,30 @@ def check_research(root: Path) -> list[Finding]:
             findings.append(hard("docs/research/index.md is empty"))
         return findings
 
-    bodies = set(RESEARCH_BODY_RE.findall(text))
+    bodies = research_blocks(text)
     known_decisions = decision_ids(decisions_text)
+    registered = registered_urls(root)
     seen: set[str] = set()
 
     for rid, _concern, _status, verified, enables in rows:
         if rid in seen:
             findings.append(hard(f"research id '{rid}' appears more than once"))
         seen.add(rid)
-        if rid not in bodies:
+        body = bodies.get(rid)
+        if body is None:
             findings.append(hard(f"research '{rid}' has no matching '## {rid}' body section"))
+        else:
+            sources = URL_RE.findall(body)
+            if not sources:
+                findings.append(hard(f"research '{rid}' cites no source URL"))
+            for url in sources:
+                if normalize_url(url) not in registered:
+                    findings.append(
+                        hard(
+                            f"research '{rid}' cites an unregistered source '{url}' "
+                            "(add it to docs/evidence-urls.json)"
+                        )
+                    )
         checked = verified.strip()
         try:
             dt.date.fromisoformat(checked)
@@ -282,7 +318,7 @@ def check_research(root: Path) -> list[Finding]:
     for decision_id in sorted(known_decisions):
         if decision_id not in enabled:
             findings.append(
-                soft(
+                hard(
                     f"decision '{decision_id}' is not enabled by any research entry "
                     "(append an R-### entry that enables it)"
                 )
@@ -637,9 +673,8 @@ def run_self_test() -> int:
         ):
             return 1
 
-        # The decision identifier and the research-to-decision edge are soft: a
-        # repository can adopt the spine without them, so they must be reported
-        # as advisory rather than failing the check.
+        # A repository can adopt the spine without decision IDs, but once both
+        # records are present in recognised shapes, their relation is an invariant.
         if not assert_soft(
             "decision without an ID",
             "docs/decisions.md",
@@ -670,10 +705,28 @@ def run_self_test() -> int:
             research.replace("2026-10-15", "not-a-date"),
         ):
             return 1
-        if not assert_soft(
+        if not assert_hard(
             "decision enabled by no research",
             "docs/research/index.md",
             research.replace("| D1 |", "| |"),
+        ):
+            return 1
+        if not assert_hard(
+            "research without a source",
+            "docs/research/index.md",
+            research.replace("https://example.com/docs/", ""),
+        ):
+            return 1
+        if not assert_hard(
+            "research with an unregistered source",
+            "docs/research/index.md",
+            research.replace("https://example.com/docs/", "https://unregistered.example/x"),
+        ):
+            return 1
+        if not assert_hard(
+            "duplicate decision id",
+            "docs/decisions.md",
+            decisions + "\n## Decision: Duplicate fixture decision\n\n" + decisions.split("## Decision: ", 1)[1],
         ):
             return 1
 

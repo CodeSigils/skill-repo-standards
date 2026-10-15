@@ -69,6 +69,8 @@ This repository is standalone: research-sensitive work starts with its own
 machine-readable evidence registry, and append-only research record. The guide
 maps recurring concerns to `domain_tag` values in `docs/evidence-urls.json`; it
 does not require a personal lab or another repository to answer the question.
+Agents receive the same route from [`AGENTS.md`](AGENTS.md), so a human and an
+agent consult one canonical process rather than separate instructions.
 
 ## Repository layout
 
@@ -123,6 +125,14 @@ does not require a personal lab or another repository to answer the question.
 │       │       ├── evidence-urls.json
 │       │       └── research
 │       │           └── index.md
+│       ├── research-integrity
+│       │   ├── README.md
+│       │   ├── SECURITY.md
+│       │   └── docs
+│       │       ├── decisions.md
+│       │       ├── evidence-urls.json
+│       │       └── research
+│       │           └── index.md
 │       ├── payload-boundary
 │       │   ├── README.md
 │       │   ├── SECURITY.md
@@ -156,6 +166,7 @@ does not require a personal lab or another repository to answer the question.
 │   ├── decisions.md
 │   ├── evidence-urls.json
 │   └── research
+│       ├── consulting.md
 │       └── index.md
 └── scripts
     ├── check_commit_messages.py
