@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "description": "Expected reference-validator results for each conformance fixture. A fixture is a miniature repository in a known shape; the corpus runner compares the validator's exit code and findings against this file.",
+  "fixtures": [
+    {
+      "name": "grade-a",
+      "summary": "The common spine only: README, SECURITY, and one skill whose frontmatter name matches its directory.",
+      "exit_code": 0,
+      "hard": [],
+      "soft": []
+    },
+    {
+      "name": "grade-b",
+      "summary": "The spine plus the anti-rot core: current-state, an immutable decision log, a research register, and a machine-readable evidence index.",
+      "exit_code": 0,
+      "hard": [],
+      "soft": []
+    },
+    {
+      "name": "advisory-shapes",
+      "summary": "A real decision log and research record written in shapes the validator does not parse. Both are advisory, never a failure.",
+      "exit_code": 0,
+      "hard": [],
+      "soft": [
+        "docs/decisions.md has no entries in a recognised shape; the decision schema and the research-to-decision edge are not machine-checkable here",
+        "docs/research/index.md has no '| R-### | ... |' rows; the research-to-decision edge is not machine-checkable in this shape"
+      ]
+    },
+    {
+      "name": "stale-evidence",
+      "summary": "A machine-readable evidence index whose single entry is older than the freshness window.",
+      "exit_code": 1,
+      "hard": [
+        "evidence 'Stale fixture source' was last verified 400 days ago (limit 180); revalidate or mark it stale"
+      ],
+      "soft": []
+    },
+    {
+      "name": "broken",
+      "summary": "A missing spine file, a decision with no status, an unregistered source, and no research register.",
+      "exit_code": 1,
+      "hard": [
+        "missing required spine file 'SECURITY.md'",
+        "decision 'Ship the fixture without a status' is missing a non-empty Status field",
+        "decision 'Ship the fixture without a status' cites an unregistered source 'https://example.invalid/unregistered' (add it to docs/evidence-urls.json)"
+      ],
+      "soft": [
+        "decision 'Ship the fixture without a status' has no ID (an ID is how a research entry enables the decision)",
+        "docs/decisions.md exists but docs/research/index.md is missing (the research-to-decision edge is not yet recorded)"
+      ]
+    }
+  ]
+}

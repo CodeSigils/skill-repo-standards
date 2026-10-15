@@ -344,3 +344,28 @@ adding the knob would be a control with no failure mode. One consequence is
 recorded rather than hidden: Dependabot commits do not follow this repository's
 commit contract, and the local `commit-msg` hook cannot enforce anything on a bot,
 so a merged Dependabot commit is an accepted exception.
+
+## Decision: Back a grade claim with a checked-in conformance corpus
+
+- ID: D20
+- Status: accepted
+- Decided: 2026-10-15
+- Sources: https://hushspec.org/docs/conformance-statement , https://axlspec.org/conformance , https://www.w3.org/TR/qaframe-spec/specgl-ics.html
+- Recheck: if the validator stops reporting findings as a flat hard/soft set, or the corpus stops matching its expected results on a routine change
+
+Rationale: the standard says a claim is an assertion until a passing check
+evidences it, but the only check behind a grade was `--self-test`, which builds
+fixtures in a temporary directory and deletes them. Nothing a reader could
+reproduce established that the validator behaves correctly on a repository like
+theirs. The corpus makes the claim checkable: fixture repositories in known
+shapes, an expected-results manifest, and `scripts/check_conformance.py`, which
+re-runs the validator against each fixture and compares the exit code and the
+hard and soft finding sets. Published conformance practice agrees that a
+statement without a report is not evidence, and grades from self-attested
+through verified. Two design choices are deliberate: the corpus asserts findings
+and the exit code rather than a grade letter, because the validator does not
+compute a grade and inventing one here would put a second, weaker truth next to
+the validator's; and fixtures carry `{{TODAY}}`/`{{STALE}}` tokens rendered at
+run time, so a checked-in fixture cannot rot into failure once it ages past the
+freshness window. The corpus makes a grade checkable, not true — it verifies the
+validator, not a repository's prose, which stays with human review.

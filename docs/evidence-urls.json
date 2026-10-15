@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "description": "Machine-readable evidence index. Every source cited by a decision is registered here with a verification date. scripts/verify_urls.py checks each entry's HTTP status and required text; scripts/standards_check.py requires that every decision source is registered.",
   "urls": [
     {
@@ -239,6 +239,28 @@
       "expected_statuses": [200],
       "source_section": "docs/decisions.md",
       "domain_tag": "dependency-automation",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "HushSpec conformance statement",
+      "url": "https://hushspec.org/docs/conformance-statement",
+      "expected_statuses": [200],
+      "required_text": ["Conformance claim"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "conformance",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "2026-10-15"
+    },
+    {
+      "name": "AXL conformance levels",
+      "url": "https://axlspec.org/conformance",
+      "expected_statuses": [200],
+      "required_text": ["Conformance Statement"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "conformance",
       "source_type": "community",
       "status": "active",
       "last_verified": "2026-10-15"

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "description": "Evidence index fixture whose entry is older than the freshness window.",
+  "urls": [
+    {
+      "name": "Stale fixture source",
+      "url": "https://example.invalid/stale",
+      "expected_statuses": [200],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "fixture",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "{{STALE}}"
+    }
+  ]
+}

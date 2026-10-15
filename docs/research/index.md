@@ -26,6 +26,7 @@ that the underlying source has not changed since.
 | R-014 | Whether the standard should explain its relationship to the established practice families and publish a next-steps list | Complete | 2026-10-15 | D17 |
 | R-015 | Whether a gate can be added to a hook or workflow without the README documenting it, and whether a definite HTTP status must not be mistaken for an environmental failure | Complete | 2026-10-15 | D18 |
 | R-016 | Whether a repository that pins Actions by SHA should adopt Dependabot, and whether it should adopt uv and Python dependencies | Complete | 2026-10-15 | D19 |
+| R-017 | Whether a claimed conformance grade should be backed by a checked-in corpus that proves the validator behaves correctly across known shapes | Complete | 2026-10-15 | D20 |
 
 ## R-001 — Specification plus validator
 
@@ -251,3 +252,30 @@ install. A type checker would not have caught the two real defects a review foun
 here (an exception-hierarchy bug and a control-flow bug), so the control fails the
 standard's own proportionality rule.
 Sources: https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference , https://github.com/CodeSigils/repo-architecture-skill
+
+## R-017 — Back the grade claim with a checked-in corpus
+
+The validator's `--self-test` builds fixtures in a temporary directory, asserts
+that the expected findings fire, and deletes them. That proves the checks can
+fail, but nothing survives the run and no fixture asserts the result a real
+repository would see. So a claimed grade rested on a self-check that was never
+itself reproducible by a reader.
+
+Published conformance practice treats that as the weak case. The W3C QA
+guidelines call for a conformance clause plus a pro forma implementation
+conformance statement; HushSpec requires a statement to name the claimed level,
+the specification version, and a machine-readable report, on the grounds that a
+statement without the report is an assertion, not evidence; AXL grades
+conformance in levels from self-attested through verified review and gives the
+statement a validity period.
+
+The proportionate response here is a small corpus checked into the repository:
+fixture repositories in known shapes, an expected-results manifest, and a runner
+that reproduces each result. Two questions were settled while building it. The
+corpus asserts the exact set of hard and soft findings and the exit code, rather
+than inventing a grade letter the validator does not compute. And fixtures carry
+date tokens that the runner renders at run time, because a checked-in fixture
+with a fixed date would rot into failure once it fell outside the freshness
+window.
+
+Sources: https://hushspec.org/docs/conformance-statement , https://axlspec.org/conformance , https://www.w3.org/TR/qaframe-spec/specgl-ics.html

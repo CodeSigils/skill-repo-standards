@@ -81,6 +81,40 @@ not run.
 ├── README.md
 ├── SECURITY.md
 ├── STANDARD.md
+├── conformance
+│   ├── expected.json
+│   └── fixtures
+│       ├── advisory-shapes
+│       │   ├── README.md
+│       │   ├── SECURITY.md
+│       │   └── docs
+│       │       ├── decisions.md
+│       │       └── research
+│       │           └── index.md
+│       ├── broken
+│       │   ├── README.md
+│       │   └── docs
+│       │       └── decisions.md
+│       ├── grade-a
+│       │   ├── README.md
+│       │   ├── SECURITY.md
+│       │   └── skills
+│       │       └── example
+│       │           └── SKILL.md
+│       ├── grade-b
+│       │   ├── README.md
+│       │   ├── SECURITY.md
+│       │   └── docs
+│       │       ├── current-state.md
+│       │       ├── decisions.md
+│       │       ├── evidence-urls.json
+│       │       └── research
+│       │           └── index.md
+│       └── stale-evidence
+│           ├── README.md
+│           ├── SECURITY.md
+│           └── docs
+│               └── evidence-urls.json
 ├── docs
 │   ├── current-state.md
 │   ├── decisions.md
@@ -89,6 +123,7 @@ not run.
 │       └── index.md
 └── scripts
     ├── check_commit_messages.py
+    ├── check_conformance.py
     ├── standards_check.py
     └── verify_urls.py
 ```
@@ -99,6 +134,8 @@ not run.
 python3 scripts/standards_check.py
 python3 scripts/standards_check.py --self-test
 python3 scripts/check_commit_messages.py --self-test
+python3 scripts/check_conformance.py
+python3 scripts/check_conformance.py --self-test
 python3 scripts/verify_urls.py --self-test
 ```
 
@@ -129,8 +166,8 @@ the date of the check. This repository's own claim is in
 
 ## What is next
 
-Committed-but-unbuilt work — currently a conformance corpus and a decision on the
-duplicated verification-command list — is listed in
+Committed-but-unbuilt work — currently a decision on the duplicated
+verification-command list — is listed in
 [`docs/current-state.md`](docs/current-state.md) under "What is next".
 
 ## License

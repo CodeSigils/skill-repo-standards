@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 1.4 (draft).** This document is the single normative source for the
+**Version 1.5 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -48,7 +48,10 @@ SHOULD be able to show a passing run of its own validation entrypoint (Grade A)
 and, where it adopts them, of the standard's reference validator. For a durable
 claim a repository MAY record it in a short `CONFORMANCE.md` naming the claimed
 grade, the `STANDARD.md` version it was checked against, and the date of the
-check. A claim with no passing check is an assertion, not evidence.
+check. Where the reference corpus covers the claimed shape, a claim MAY cite the
+matching fixture as its evidence, since a checked-in fixture is reproducible by
+a reader while a self-check in a temporary directory is not. A claim with no
+passing check is an assertion, not evidence.
 
 ## The common spine (Grade A)
 
@@ -263,6 +266,12 @@ research register or decision log in a shape the validator does not recognise,
 are all reported as advisory notes rather than failures. A shape mismatch is
 advisory; a substantive breach — a recognised entry with no status, no date, an
 unregistered source, or no rationale — stays hard.
+
+A companion check, `scripts/check_conformance.py`, runs the validator against
+the checked-in fixtures under `conformance/` and compares each fixture's exit
+code and finding set with `conformance/expected.json`. It verifies the
+validator, not a repository: the fixtures exist so that a stated result can be
+reproduced by a reader instead of taken on trust.
 
 Detection is automated; **correction is not.** A recorded decision is a starting
 point for the next reader, not proof.

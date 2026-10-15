@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "description": "Evidence index fixture for the conformance corpus.",
+  "urls": [
+    {
+      "name": "Fixture source",
+      "url": "https://example.invalid/fixture",
+      "expected_statuses": [200],
+      "required_text": ["fixture"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "fixture",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "{{TODAY}}"
+    }
+  ]
+}

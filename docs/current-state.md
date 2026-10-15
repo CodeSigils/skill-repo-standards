@@ -56,6 +56,12 @@ Last reviewed: 2026-10-15.
   two open pull requests, no auto-merge, and a major bump of a pinned action is
   ignored so it is taken deliberately rather than as routine. `uv` and Python
   dependencies are declined: this repository has none. (checked 2026-10-15)
+- A conformance corpus, checked in under `conformance/`: fixture repositories in
+  known shapes with an expected-results manifest and a runner
+  (`scripts/check_conformance.py`) that re-runs the validator against each and
+  compares the exit code and the hard and soft finding sets. It makes a grade
+  checkable rather than asserted, and its fixtures render date tokens at run time
+  so a checked-in fixture cannot rot past the freshness window. (checked 2026-10-15)
 - Grade C: controls a repository has individually justified against a named
   failure mode. (checked 2026-10-15)
 
@@ -63,9 +69,6 @@ Last reviewed: 2026-10-15.
 
 Committed-but-unbuilt work, in the order it is worth doing:
 
-- Publish a **conformance corpus**: a set of small fixture repositories, each in
-  a known grade shape, so a claimed grade can be checked rather than only
-  asserted. The validator's `--self-test` fixtures are the seed. (checked 2026-10-15)
 - Decide whether the verification-command list should be sourced from one place
   across the README, the hooks, and CI. Cross-surface drift is now **detected**
   (the validator reports a command the executed surfaces run but the README does
