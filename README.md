@@ -54,10 +54,9 @@ judges whether a sentence is true.
 ## Maintaining this repository
 
 `STANDARD.md` describes what adopters implement; this repository's maintainer
-routing is in [`AGENTS.md`](AGENTS.md). A future `docs/MAINTENANCE.md` belongs
-only when a recurring repository-only runbook has no existing owner; see the
-[maintenance-document boundary](AGENTS.md#maintenance-document-boundary). It
-will own that runbook and link outward rather than restate the standard.
+routing is in [`AGENTS.md`](AGENTS.md). [`docs/MAINTENANCE.md`](docs/MAINTENANCE.md)
+owns the repository-only release runbook; it links outward rather than restating
+the standard.
 
 ## Use the validator
 
@@ -198,6 +197,7 @@ material multi-option choice only, use the optional Grade C
 │   ├── current-state.md
 │   ├── decisions.md
 │   ├── evidence-urls.json
+│   ├── MAINTENANCE.md
 │   └── research
 │       ├── consulting.md
 │       ├── evidence-appraisal.md

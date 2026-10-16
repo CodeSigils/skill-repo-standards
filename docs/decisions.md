@@ -601,3 +601,22 @@ runtime behavior but weakened reviewability. The forward rule belongs in the
 standard lifecycle, which owns versioning; `AGENTS.md` links to it for maintainer
 entry. The historical migration is clarified in place. Rewriting protected shared
 history would create more risk than it removes.
+
+## Decision: Publish normative standard versions as annotated prereleases
+
+- ID: D32
+- Status: accepted
+- Decided: 2026-10-16
+- Sources: https://git-scm.com/docs/git-tag , https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
+- Recheck: when the standard becomes stable, a package-distribution channel is added, or release consumers need a different compatibility policy
+- Context: The public repository had no tags or GitHub releases, so a reader could identify the 2.5 draft in history but could not select a named, immutable artifact for adoption or comparison.
+- Evidence appraisal: Git documents annotated tags as release objects with tagger, date, and message; GitHub releases are tag-based and can be marked prerelease. These sources establish the artifact mechanics, while the repository's documented draft status establishes that a prerelease is the honest publication state.
+- Outcome check: Every future normative standard version has one annotated tag and one GitHub release after the documented checks pass; draft versions are prereleases, and ordinary maintenance commits do not receive release tags.
+- Evidence profile: primary
+
+Rationale: A semantic standard version is useful to adopters only when it names
+a reproducible artifact. The event that changes the normative standard supplies
+that boundary; a calendar cadence would create releases with no corresponding
+adoption decision. `docs/MAINTENANCE.md` owns the operational runbook, while
+`STANDARD.md` continues to own compatibility and version meaning. Existing
+history is left untagged to avoid inventing releases after the fact.

@@ -39,6 +39,7 @@ that the underlying source has not changed since.
 | R-027 | Whether a maintainer agent's cold-boot read order and state pre-flight are complete enough to avoid acting on an incomplete picture | Complete | 2026-10-16 | D29 |
 | R-028 | Whether the corpus's coverage promise needs a computed check once a prose-visible omission is known to have failed elsewhere | Complete | 2026-10-16 | D30 |
 | R-029 | Whether release history needs an explicit one-version-per-commit rule after two migration notes shipped together | Complete | 2026-10-16 | D31 |
+| R-030 | Whether a draft standard needs immutable release artifacts and an event-driven release cadence | Complete | 2026-10-16 | D32 |
 
 ## R-001 — Specification plus validator
 
@@ -573,3 +574,23 @@ is retained and explicitly marked as published with 2.4, rather than rewriting
 shared history or inventing an unavailable version.
 
 Sources: https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle
+
+## R-030 — Draft-release artifact and cadence
+
+The public standard had a versioned document and a passing conformance snapshot,
+but no tag or GitHub release. A reader could locate the draft only by navigating
+moving branch history, so the claimed version was not a named adoption artifact.
+
+Git distinguishes annotated tags, which carry tagger metadata and a message,
+from lightweight labels, and identifies annotated tags as release objects.
+GitHub releases are based on tags and support a prerelease state. Those mechanics
+support one annotated tag and one prerelease for every normative draft version;
+they do not justify calendar releases or tags for ordinary maintenance commits.
+
+The rule is limited to publication mechanics. `STANDARD.md` retains ownership of
+what a version means, and a status transition is rechecked before a stable release
+is claimed. Existing history remains untagged because a retrospective tag would
+invent a release date and publication decision that did not occur.
+
+Sources: https://git-scm.com/docs/git-tag ,
+https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository

@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "description": "Machine-readable evidence index. Every source cited by a decision is registered here with a verification date. scripts/verify_urls.py checks each entry's HTTP status and required text; scripts/standards_check.py requires that every decision source is registered.",
   "urls": [
     {
@@ -435,6 +435,28 @@
       "required_text": ["should be calculated and published"],
       "source_section": "docs/decisions.md",
       "domain_tag": "conformance",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-16"
+    },
+    {
+      "name": "Git annotated tags",
+      "url": "https://git-scm.com/docs/git-tag",
+      "expected_statuses": [200],
+      "required_text": ["annotated tags"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "specification-lifecycle",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-16"
+    },
+    {
+      "name": "GitHub release management",
+      "url": "https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository",
+      "expected_statuses": [200],
+      "required_text": ["Managing releases in a repository"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "specification-lifecycle",
       "source_type": "official_docs",
       "status": "active",
       "last_verified": "2026-10-16"

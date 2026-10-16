@@ -31,9 +31,10 @@ Last reviewed: 2026-10-16.
 - One owner of truth per audience: `docs/current-state.md` owns what is true
   about this repository, and the runtime payload owns what an installed skill
   does; a payload is kept from linking into `docs/`. (checked 2026-10-15)
-- This repository has no `docs/MAINTENANCE.md`; the threshold for creating one
-  is owned by [`AGENTS.md`'s maintenance-document boundary](../AGENTS.md#maintenance-document-boundary),
-  which the README signposts. (checked 2026-10-16)
+- [`docs/MAINTENANCE.md`](MAINTENANCE.md) owns the repository-only release
+  runbook. Each normative standard version is published as an annotated Git tag
+  and GitHub prerelease after the documented checks pass; ordinary maintenance
+  commits are not tagged. (checked 2026-10-16)
 - A change lifecycle (research → finding → decision → implementation → check)
   whose recognised research-to-decision edge is machine-enforced: every
   recognised research body cites registered evidence, every decision has an
@@ -125,12 +126,6 @@ Last reviewed: 2026-10-16.
 ## What is next
 
 Committed-but-unbuilt work, in the order it is worth doing:
-
-- Create the repository-only release runbook in `docs/MAINTENANCE.md`, then
-  publish an annotated prerelease for the verified 2.5 draft. The tag and notes
-  should link the 2.5 migration and `CONFORMANCE.md`; do not present the draft as
-  stable. This creates a reproducible artifact for the external-adoption trial.
-  (checked 2026-10-16)
 - Trial the evidence-appraisal profile in one additional Grade B repository and
   record whether it improves review. Only then decide whether its field
   presence should become universal rather than opt-in. (checked 2026-10-15)
