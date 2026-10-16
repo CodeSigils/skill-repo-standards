@@ -17,13 +17,13 @@ Exit codes follow the local check contract: 0 clean, 1 findings, 2 could not run
 from __future__ import annotations
 
 import argparse
-from collections import Counter
 import datetime as dt
 import json
 import re
 import shutil
 import sys
 import tempfile
+from collections import Counter
 from pathlib import Path
 
 HARD = "hard"
