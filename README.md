@@ -252,9 +252,7 @@ the date of the check. This repository's own claim is in
 
 ## What is next
 
-The ordered next steps — trial the evidence-appraisal profile in another Grade B
-repository, use the trade-study template only for a material choice, then revisit
-the duplicated verification-command list — live in
+The current prioritized next steps live in
 [`docs/current-state.md`](docs/current-state.md) under "What is next".
 
 ## License

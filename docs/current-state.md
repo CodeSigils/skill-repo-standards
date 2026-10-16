@@ -126,6 +126,11 @@ Last reviewed: 2026-10-16.
 
 Committed-but-unbuilt work, in the order it is worth doing:
 
+- Create the repository-only release runbook in `docs/MAINTENANCE.md`, then
+  publish an annotated prerelease for the verified 2.5 draft. The tag and notes
+  should link the 2.5 migration and `CONFORMANCE.md`; do not present the draft as
+  stable. This creates a reproducible artifact for the external-adoption trial.
+  (checked 2026-10-16)
 - Trial the evidence-appraisal profile in one additional Grade B repository and
   record whether it improves review. Only then decide whether its field
   presence should become universal rather than opt-in. (checked 2026-10-15)
