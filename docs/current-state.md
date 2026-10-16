@@ -113,9 +113,10 @@ Last reviewed: 2026-10-16.
 - `AGENTS.md` owns a cold-boot directive for maintainer agents: the read order
   (normative rules before the README, the consultation guide, the conformance
   claim last), a working-tree and CI pre-flight, running the deterministic gates
-  before starting, and naming the target file and its owning rule. It is instance
-  guidance, not a rule of the standard, so no version is bumped. (checked
-  2026-10-16)
+  before starting, naming the target file and its owning rule, and a pre-handoff
+  status report that makes staged, modified, and untracked work explicit. It is
+  instance guidance, not a rule of the standard, so no version is bumped.
+  (checked 2026-10-16)
 - The standard lifecycle requires each version-changing commit to represent one
   released version. The historical 2.3 migration remains in place but states
   that it shipped with 2.4, preserving an honest record without rewriting shared

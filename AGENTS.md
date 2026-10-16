@@ -116,3 +116,11 @@ For standard-release versioning, follow the rule in
 
 Run the commands in the README's Verification section. The deterministic checks
 must pass; the live URL check is optional locally.
+
+## Git state before handoff
+
+For any task that changes the working tree, immediately before the final handoff
+run `git status -sb` and report the branch relation plus every staged, modified,
+or untracked path. If work is deliberately uncommitted, say why and state that it
+was not pushed. Never commit, push, discard, or hide changes merely to make the
+tree clean; those actions require the user's request.
