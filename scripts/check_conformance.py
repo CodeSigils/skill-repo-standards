@@ -113,7 +113,7 @@ def load_validator() -> types.ModuleType:
 
 
 def exercise_checks(
-    fixtures: list[dict], tokens: dict[str, str]
+    fixtures: list[dict], tokens: dict[str, str], module: types.ModuleType | None = None
 ) -> tuple[list[str], list[str], list[str]]:
     """Run the validator in-process over the corpus and report its coverage.
 
@@ -122,7 +122,7 @@ def exercise_checks(
     all. A check nothing reaches, or one whose findings no fixture records, is a
     regression the manifest would otherwise report as silence.
     """
-    module = load_validator()
+    module = load_validator() if module is None else module
     defined = validator_checks(module)
     originals = {name: getattr(module, name) for name in defined}
     reached: set[str] = set()
@@ -159,6 +159,9 @@ def exercise_checks(
                         io.StringIO()
                     ), contextlib.redirect_stderr(io.StringIO()):
                         module.main([str(target), "--max-age-days", str(MAX_AGE_DAYS)])
+            except SystemExit as exc:
+                problems.append(f"{name}: coverage audit exited with status {exc.code}")
+                continue
             except Exception as exc:  # the subprocess pass already named the real fault
                 problems.append(f"{name}: coverage audit failed: {exc}")
                 continue
@@ -255,6 +258,23 @@ def run_self_test() -> int:
         return 1
     if not defined or "check_target" in defined:
         print(f"FAIL: unexpected validator check set: {defined!r}", file=sys.stderr)
+        return 1
+
+    exit_module = types.ModuleType("coverage_audit_exit")
+    exit_module.check_exit = lambda: []
+
+    def exit_main(_argv: list[str]) -> int:
+        raise SystemExit(7)
+
+    exit_module.main = exit_main
+    _, _, audit_problems = exercise_checks(
+        [{"name": "grade-a"}], tokens, module=exit_module
+    )
+    if audit_problems != ["grade-a: coverage audit exited with status 7"]:
+        print(
+            f"FAIL: unexpected SystemExit audit result: {audit_problems!r}",
+            file=sys.stderr,
+        )
         return 1
 
     print("PASS: check_conformance.py self-tests")

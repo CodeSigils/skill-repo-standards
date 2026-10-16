@@ -582,3 +582,22 @@ rather than a rule in the adopter-facing validator, because no conformance grade
 requires an adopter to ship a corpus. It changes no `MUST`, so `STANDARD.md` is
 not required to change for the control itself; the standard's description of the
 companion check is corrected so it no longer under-describes what ships.
+
+## Decision: Use one released version per version-changing commit
+
+- ID: D31
+- Status: accepted
+- Decided: 2026-10-16
+- Sources: https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle
+- Recheck: when a version-changing commit again needs more than one migration heading, or a release workflow replaces commit-based releases
+- Context: The 2.4 commit published both 2.3 and 2.4 migration notes, leaving no checkout that represents version 2.3.
+- Evidence appraisal: The release remained coherent, but the change lifecycle already names the version bump as an accountable artifact. A one-version-per-commit rule makes the historical state inspectable without requiring a rewrite of shared history.
+- Outcome check: Future version-changing commits have exactly one released version and matching migration note; the 2.3 note explicitly states that it shipped with 2.4.
+- Evidence profile: primary
+
+Rationale: Version numbers are release identifiers, not a list of independently
+reviewable changes hidden inside one commit. The 2.3/2.4 jump was harmless to
+runtime behavior but weakened reviewability. The forward rule belongs in the
+standard lifecycle, which owns versioning; `AGENTS.md` links to it for maintainer
+entry. The historical migration is clarified in place. Rewriting protected shared
+history would create more risk than it removes.

@@ -98,6 +98,9 @@ Use `type[(scope)]: verb — rationale` for the subject, then a body with a
 (`fix`, `close`, `resolve` followed by an issue number) — they auto-close issues
 on merge. Reference an issue with `Refs` instead.
 
+For standard-release versioning, follow the rule in
+[`STANDARD.md`'s change lifecycle](STANDARD.md#change-lifecycle).
+
 ## Verification before claiming completion
 
 Run the commands in the README's Verification section. The deterministic checks

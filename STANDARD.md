@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 2.4 (draft).** This document is the single normative source for the
+**Version 2.5 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -193,7 +193,9 @@ Version 2.3 makes step 4 of the change lifecycle name the full artifact set a
 machine-checkable change must ship: the validator update and its `--self-test`,
 the `conformance/` fixture and its `expected.json` entry, the README layout entry
 for any new file, the current-state update, and the version bump. No existing
-record must change, so the migration is documentary.
+record must change, so the migration is documentary. It was developed and
+published together with 2.4 in one 2.4 release; there is no 2.3 checkout. This
+note remains so a reader updating from 2.2 can identify the included change.
 
 ### 2.4 migration
 
@@ -203,6 +205,14 @@ reached by a fixture or never produces a finding the manifest records. A
 repository that ships a corpus picks the check up on its next run; a repository
 without one is unaffected, because the promise only exists where the corpus
 does. No record changes and no `MUST` moves.
+
+### 2.5 migration
+
+Each version-changing commit represents one released version. Do not add a
+migration heading for an unpublished intermediate version: split independently
+reviewable changes into sequential versioned commits, or describe a deliberately
+batched change under its one released version. This clarification governs this
+standard's own release history; it adds no adopter-facing control.
 
 ## Change lifecycle
 
@@ -231,6 +241,11 @@ applies to the standard itself as much as to any repository adopting it.
    describe the same reality, and `docs/decisions.md` MUST hold every choice the
    change made. Disagreement between the pair is documentation drift to resolve
    before the change is closed.
+
+When a commit changes this document's version, it represents one released
+version and has one matching migration heading. Do not name an unpublished
+intermediate version; split independently reviewable changes into sequential
+versioned commits, or batch them under the single released version.
 
 A research entry enables a decision; a decision is enabled by at least one
 research entry. The validator enforces that every decision is enabled, that

@@ -38,6 +38,7 @@ that the underlying source has not changed since.
 | R-026 | Whether the change lifecycle should name the full artifact set a machine-checkable standard change must ship | Complete | 2026-10-16 | D28 |
 | R-027 | Whether a maintainer agent's cold-boot read order and state pre-flight are complete enough to avoid acting on an incomplete picture | Complete | 2026-10-16 | D29 |
 | R-028 | Whether the corpus's coverage promise needs a computed check once a prose-visible omission is known to have failed elsewhere | Complete | 2026-10-16 | D30 |
+| R-029 | Whether release history needs an explicit one-version-per-commit rule after two migration notes shipped together | Complete | 2026-10-16 | D31 |
 
 ## R-001 — Specification plus validator
 
@@ -555,3 +556,20 @@ file, not a new validator check.
 
 Sources: https://agents.md/ ,
 https://llmstxt.org/
+
+## R-029 — One released version per version-changing commit
+
+The 2.4 release introduced both a 2.3 migration note and a 2.4 migration note,
+so the history contains no checkout labelled 2.3. The resulting release is
+coherent, but a reader cannot inspect the two migrations independently. The
+repository's change lifecycle already treats a version bump as a named artifact;
+the remaining gap is that the standard lifecycle did not say whether one commit
+could represent multiple released versions.
+
+For future version-changing commits, one commit represents one released version.
+Independently reviewable changes either land as sequential versioned commits or
+share one deliberate release version and migration note. The historical 2.3 note
+is retained and explicitly marked as published with 2.4, rather than rewriting
+shared history or inventing an unavailable version.
+
+Sources: https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle

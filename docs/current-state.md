@@ -109,6 +109,10 @@ Last reviewed: 2026-10-16.
   before starting, and naming the target file and its owning rule. It is instance
   guidance, not a rule of the standard, so no version is bumped. (checked
   2026-10-16)
+- The standard lifecycle requires each version-changing commit to represent one
+  released version. The historical 2.3 migration remains in place but states
+  that it shipped with 2.4, preserving an honest record without rewriting shared
+  history. (checked 2026-10-16)
 
 ## What is next
 

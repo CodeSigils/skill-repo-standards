@@ -39,9 +39,6 @@ Icon?
 Thumbs.db
 *.swp
 *.swo
-*~
-.vscode/
-.idea/
 # Emacs
 *~
 \#*\#
