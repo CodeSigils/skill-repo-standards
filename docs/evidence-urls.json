@@ -1,5 +1,5 @@
 {
-  "version": 7,
+  "version": 8,
   "description": "Machine-readable evidence index. Every source cited by a decision is registered here with a verification date. scripts/verify_urls.py checks each entry's HTTP status and required text; scripts/standards_check.py requires that every decision source is registered.",
   "urls": [
     {
@@ -413,6 +413,28 @@
       "required_text": ["Security scanning"],
       "source_section": "docs/research/index.md",
       "domain_tag": "skill-runtime-trust",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-16"
+    },
+    {
+      "name": "W3C method for writing testable conformance requirements",
+      "url": "https://www.w3.org/TR/test-methodology/",
+      "expected_statuses": [200],
+      "required_text": ["Build at least one test case for each conformance requirement"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "conformance",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-16"
+    },
+    {
+      "name": "W3C QA test guidelines coverage data",
+      "url": "https://www.w3.org/QA/WG/2003/10/TestGL-20031020.html",
+      "expected_statuses": [200],
+      "required_text": ["should be calculated and published"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "conformance",
       "source_type": "official_docs",
       "status": "active",
       "last_verified": "2026-10-16"

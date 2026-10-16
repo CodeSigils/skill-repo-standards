@@ -521,3 +521,64 @@ Rationale: A concern map with fewer routes than the evidence index declares is
 exactly the drift a coverage review is meant to catch, and prose alone did not
 prevent it. The check binds only when the guide exists, so it is a compatible
 extension, and a corpus fixture keeps it honest.
+
+## Decision: Name the full artifact set in the change lifecycle
+
+- ID: D28
+- Status: accepted
+- Decided: 2026-10-16
+- Sources: https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle
+- Recheck: when a standard change is observed to ship without one of the named artifacts
+- Context: Step 4 of the change lifecycle named only the validator and its self-test, so the conformance fixture, the version bump, and the paired records were implied rather than stated.
+- Evidence appraisal: The lifecycle already requires implementation and check; the gap was that a machine-checkable change could satisfy the letter of step 4 while leaving the corpus unexercised. GOV.UK assurance guidance supports making the accountable artifacts explicit at the point of change rather than trusted to memory.
+- Outcome check: A reader of step 4 can enumerate every artifact a machine-checkable change must ship, and the corpus's fixture promise is one of them.
+- Evidence profile: primary
+
+Rationale: The change lifecycle is the single owner of how this standard changes,
+so its implementation step must name everything a change ships; otherwise a
+maintainer who follows step 4 literally can add a check without the fixture that
+proves it and the corpus still passes. This closes the gap identified in the
+self-review of the consultation-coverage change, which stated the artifact set
+only across several documents. Naming the set is a compatible extension of the
+existing procedure — it adds no `MUST` on adopting repositories and makes no
+conforming repository non-conforming — so it is a minor bump.
+
+## Decision: Adopt a cold-boot directive for maintainer agents
+
+- ID: D29
+- Status: accepted
+- Decided: 2026-10-16
+- Sources: https://agents.md/ , https://llmstxt.org/
+- Recheck: when the entry file, the read order, or a supported agent discovery surface changes
+- Context: `AGENTS.md` had a read order but no pre-flight. An agent could start on a dirty tree, a diverged branch, or red CI, and could act on an incomplete picture because the read order omitted the consultation guide and the conformance claim.
+- Evidence appraisal: The registered `agent-discoverability` sources establish a single discoverable entry file as the agent's starting point (R-004, R-027). The failure mode is starting from an entry that omits state, gates, and the research route; prose in the entry file is the proportionate control, because onboarding completeness is not machine-checkable.
+- Outcome check: A maintainer agent following `AGENTS.md` reads the normative rules before the README, checks working-tree and CI state before working, runs the deterministic gates, and names the target file and its owning rule.
+- Evidence profile: primary
+
+Rationale: The repository's cold boot is a named concern with a concrete failure
+mode — an agent that starts on an unreported dirty tree or acts from a partial
+read order. Naming the order and the pre-flight in `AGENTS.md`, the single owner
+of agent guidance, prevents it without a control that cannot be checked. This is
+instance guidance, not a rule of the standard, so `STANDARD.md` is unchanged and
+no version is bumped.
+
+## Decision: Compute the corpus's coverage instead of asserting it
+
+- ID: D30
+- Status: accepted
+- Decided: 2026-10-16
+- Sources: https://www.w3.org/TR/test-methodology/ , https://www.w3.org/QA/WG/2003/10/TestGL-20031020.html , https://hushspec.org/docs/conformance-statement
+- Recheck: when a validator check ships without a fixture and the audit stays silent, or when the audit produces a finding that a conforming corpus cannot clear
+- Context: `STANDARD.md` and D21 assert that every check the validator performs is exercised by at least one fixture, but only prose asserted it. The same defect class — two machine-readable sides of a completeness claim that nothing reconciles — was demonstrated when the consultation concern map exposed fewer routes than the evidence index declared, and no sentence asserting completeness had prevented it.
+- Evidence appraisal: R-018 considered and rejected a mechanism, judging five fixtures plus a sentence proportionate because the sentence would make an omission visible. That judgment rested on visibility being enough; the map-versus-registry drift shows a visible omission is not an enforced one. W3C guidance requires at least one test case per conformance requirement and requires coverage data to be calculated and published, so computing coverage is established practice rather than ceremony, and hushspec's rule that a statement without its report is an assertion still applies to the corpus's own claim.
+- Outcome check: Deleting a call from `check_target`, or adding a check that no fixture drives to a finding, fails `python3 scripts/check_conformance.py` with the name of the uncovered check instead of passing silently, and `--self-test` covers the gap arithmetic itself.
+- Evidence profile: primary
+
+Rationale: The corpus exists so that the validator's behaviour is reproduced
+rather than taken on trust, which makes an unverified coverage claim the same
+defect one level up: the evidence for the validator outruns the check on the
+evidence. The audit is deliberately a second pass inside `check_conformance.py`
+rather than a rule in the adopter-facing validator, because no conformance grade
+requires an adopter to ship a corpus. It changes no `MUST`, so `STANDARD.md` is
+not required to change for the control itself; the standard's description of the
+companion check is corrected so it no longer under-describes what ships.

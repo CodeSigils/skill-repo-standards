@@ -9,14 +9,39 @@ normative document is `STANDARD.md`; the executable part is
 
 ## Read first
 
-Before changing anything, read:
+Before changing anything, read, in this order:
 
-1. `STANDARD.md` — the normative rules. Do not restate them elsewhere; link.
-2. `README.md` — layout, usage, and the verification commands.
-3. `docs/decisions.md` — durable decisions already made, with sources.
+1. `AGENTS.md` — this file: the working contract for the repository.
+2. `STANDARD.md` — the normative rules. Read them before the README, so a
+   README sentence is not mistaken for a rule. Do not restate them elsewhere;
+   link.
+3. `README.md` — layout, usage, and the verification commands.
 4. `docs/current-state.md` — what is true now, including the `## What is next`
    list of committed-but-unbuilt work.
-5. The specific script or document you intend to change.
+5. `docs/decisions.md` — durable decisions already made, with sources.
+6. `docs/research/consulting.md` — the canonical research consultation guide.
+7. The specific script or document you intend to change.
+8. `CONFORMANCE.md` last — a status snapshot (grade, version, checked date,
+   corpus count), not a rule owner.
+
+Pull `docs/research/index.md` and `docs/evidence-urls.json` on demand; the
+consultation guide routes to them.
+
+## Cold boot
+
+On a cold first run, before you change anything:
+
+1. **Check state and CI, and report before working.** Run `git status -sb`,
+   `git fetch && git status -sb`, `git remote -v`, and `git log --oneline -10`,
+   and check CI with `gh run list`. Report a dirty tree, a diverged branch, or
+   red or absent CI before you start rather than working on top of it.
+2. **Run the deterministic gates** in the README's Verification section and
+   confirm they pass, so you start from a known-good checkout.
+3. **Confirm the shape.** This repository is maintainer infrastructure with no
+   `skills/` payload (see above), so the payload-boundary check is inert and
+   Grade A's payload item does not apply.
+4. **Name the target and its owner.** Identify the specific file you intend to
+   change and the single rule that owns it.
 
 ## Before re-researching
 

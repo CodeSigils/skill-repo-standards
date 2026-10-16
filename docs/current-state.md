@@ -61,11 +61,14 @@ Last reviewed: 2026-10-16.
 - A conformance corpus, checked in under `conformance/`: fixture repositories in
   known shapes with an expected-results manifest and a runner
   (`scripts/check_conformance.py`) that re-runs the validator against each and
-  compares the exit code and the hard and soft finding sets. Every check the
-  validator performs is exercised by at least one fixture, so a regression in any
-  of them fails the corpus instead of passing silently. It makes a grade checkable
-  rather than asserted, and its fixtures render date tokens at run time so a
-  checked-in fixture cannot rot past the freshness window. (checked 2026-10-15)
+  compares the exit code and the hard and soft finding sets. The runner also
+  computes its own coverage: every check the validator defines must be reached
+  by at least one fixture and must return a finding some fixture records, so the
+  corpus's coverage promise is a failing command rather than a sentence, and a
+  regression in any check fails the corpus instead of passing silently. It makes
+  a grade checkable rather than asserted, and its fixtures render date tokens at
+  run time so a checked-in fixture cannot rot past the freshness window.
+  (checked 2026-10-16)
 - Grade C: controls a repository has individually justified against a named
   failure mode. (checked 2026-10-15)
 - A standalone research consultation guide maps recurring concerns to the
@@ -95,6 +98,17 @@ Last reviewed: 2026-10-16.
   is a failure and an unreachable map tag is advisory, so the demonstrated
   map-versus-registry drift is a checked failure rather than prose alone.
   (checked 2026-10-16)
+- The change lifecycle's implementation step names the full artifact set a
+  machine-checkable change must ship: the validator update and its `--self-test`,
+  the `conformance/` fixture and its `expected.json` entry, the README layout
+  entry for any new file, the current-state update, and the version bump.
+  (checked 2026-10-16)
+- `AGENTS.md` owns a cold-boot directive for maintainer agents: the read order
+  (normative rules before the README, the consultation guide, the conformance
+  claim last), a working-tree and CI pre-flight, running the deterministic gates
+  before starting, and naming the target file and its owning rule. It is instance
+  guidance, not a rule of the standard, so no version is bumped. (checked
+  2026-10-16)
 
 ## What is next
 

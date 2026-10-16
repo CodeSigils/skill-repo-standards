@@ -7,6 +7,11 @@ code and the exact hard and soft findings the validator must produce. A grade
 claim is an assertion until a run evidences it, so this is what makes the claim
 checkable rather than merely stated.
 
+Beyond comparing each fixture's findings, the run audits its own coverage: the
+validator is imported in-process and its check functions are recorded as the
+corpus exercises them, so a check no fixture reaches, or one whose findings no
+fixture records, fails the run instead of passing as silence.
+
 Fixture dates are written as ``{{TODAY}}`` and ``{{STALE}}`` and rendered into a
 temporary copy at run time, so a checked-in fixture does not rot into failure
 once it is older than the freshness window.
@@ -18,12 +23,16 @@ Exit codes follow the local check contract: 0 clean, 1 findings, 2 could not run
 from __future__ import annotations
 
 import argparse
+import contextlib
 import datetime as dt
+import importlib.util
+import io
 import json
 import shutil
 import subprocess
 import sys
 import tempfile
+import types
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,6 +79,98 @@ def parse_findings(stdout: str, stderr: str) -> tuple[list[str], list[str]]:
         elif line.startswith("NOTE: "):
             soft.append(line[len("NOTE: ") :])
     return hard, soft
+
+
+def validator_checks(module: types.ModuleType) -> list[str]:
+    """Return the check functions a validator module defines, minus its driver."""
+    return sorted(
+        name
+        for name, obj in vars(module).items()
+        if name.startswith("check_") and name != "check_target" and callable(obj)
+    )
+
+
+def coverage_gaps(defined: set[str], reached: set[str]) -> list[str]:
+    """Return the defined checks that no fixture reached."""
+    return sorted(defined - reached)
+
+
+def silent_checks(reached: set[str], yielded: set[str]) -> list[str]:
+    """Return the reached checks whose findings no fixture records."""
+    return sorted(reached - yielded)
+
+
+def load_validator() -> types.ModuleType:
+    """Import the reference validator in-process; importing it must not run it."""
+    spec = importlib.util.spec_from_file_location(
+        "standards_check_under_coverage", VALIDATOR
+    )
+    if spec is None or spec.loader is None:
+        raise ImportError(f"cannot load the validator at {VALIDATOR}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def exercise_checks(
+    fixtures: list[dict], tokens: dict[str, str]
+) -> tuple[list[str], list[str], list[str]]:
+    """Run the validator in-process over the corpus and report its coverage.
+
+    The subprocess pass proves each fixture produces its exact finding set; this
+    second pass proves the manifest can describe the validator's behaviour at
+    all. A check nothing reaches, or one whose findings no fixture records, is a
+    regression the manifest would otherwise report as silence.
+    """
+    module = load_validator()
+    defined = validator_checks(module)
+    originals = {name: getattr(module, name) for name in defined}
+    reached: set[str] = set()
+    yielded: set[str] = set()
+    current_reached: set[str] = set()
+    current_yielded: set[str] = set()
+    problems: list[str] = []
+
+    def recording(name: str, original):
+        def wrapper(*args, **kwargs):
+            result = original(*args, **kwargs)
+            current_reached.add(name)
+            if result:
+                current_yielded.add(name)
+            return result
+
+        return wrapper
+
+    for name in defined:
+        setattr(module, name, recording(name, originals[name]))
+    try:
+        for entry in fixtures:
+            name = entry["name"]
+            fixture = FIXTURES / name
+            if not fixture.is_dir():
+                continue
+            current_reached.clear()
+            current_yielded.clear()
+            try:
+                with tempfile.TemporaryDirectory(prefix=f"coverage-{name}-") as tmp:
+                    target = Path(tmp) / name
+                    materialise(fixture, target, tokens)
+                    with contextlib.redirect_stdout(
+                        io.StringIO()
+                    ), contextlib.redirect_stderr(io.StringIO()):
+                        module.main([str(target), "--max-age-days", str(MAX_AGE_DAYS)])
+            except Exception as exc:  # the subprocess pass already named the real fault
+                problems.append(f"{name}: coverage audit failed: {exc}")
+                continue
+            reached |= current_reached
+            yielded |= current_yielded
+    finally:
+        for name, original in originals.items():
+            setattr(module, name, original)
+
+    if not defined:
+        problems.append("the validator defines no check functions")
+    return coverage_gaps(set(defined), reached), silent_checks(reached, yielded), problems
 
 
 def check_fixture(
@@ -129,18 +230,33 @@ def load_expected(path: Path) -> list[dict]:
 
 
 def run_self_test() -> int:
-    """Check the token rendering and the finding parser offline."""
+    """Check the token rendering, the finding parser, and the gap arithmetic offline."""
     tokens = date_tokens(dt.date(2026, 10, 15))
     cases = [
         (render("date: {{TODAY}}", tokens), "date: 2026-10-15"),
         (render("date: {{STALE}}", tokens), "date: 2025-09-10"),
         (parse_findings("", "FAIL: a\nNOTE: b\n"), (["a"], ["b"])),
         (parse_findings("OK: repository conforms\n", ""), ([], [])),
+        (coverage_gaps({"check_one", "check_two"}, {"check_one"}), ["check_two"]),
+        (coverage_gaps({"check_one"}, {"check_one", "check_two"}), []),
+        (coverage_gaps(set(), set()), []),
+        (silent_checks({"check_one", "check_two"}, {"check_one"}), ["check_two"]),
+        (silent_checks({"check_one"}, {"check_one"}), []),
     ]
     for actual, wanted in cases:
         if actual != wanted:
             print(f"FAIL: expected {wanted!r}, got {actual!r}", file=sys.stderr)
             return 1
+
+    try:
+        defined = validator_checks(load_validator())
+    except (ImportError, OSError, SyntaxError) as exc:
+        print(f"FAIL: cannot load the validator: {exc}", file=sys.stderr)
+        return 1
+    if not defined or "check_target" in defined:
+        print(f"FAIL: unexpected validator check set: {defined!r}", file=sys.stderr)
+        return 1
+
     print("PASS: check_conformance.py self-tests")
     return 0
 
@@ -180,6 +296,17 @@ def main(argv: list[str]) -> int:
             print(f"FAIL {name}")
         else:
             print(f"PASS {name}")
+
+    try:
+        gaps, silent, audit_problems = exercise_checks(fixtures, tokens)
+    except (ImportError, OSError, SyntaxError, ValueError) as exc:
+        print(f"FAIL: the coverage audit could not run: {exc}", file=sys.stderr)
+        return 2
+    problems.extend(audit_problems)
+    for check in gaps:
+        problems.append(f"no fixture exercises validator check '{check}'")
+    for check in silent:
+        problems.append(f"no fixture records a finding from validator check '{check}'")
 
     if problems:
         for problem in problems:

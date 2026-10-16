@@ -50,8 +50,9 @@ policy catalogue.
 | Decision records and ownership of repository facts | `decision-records` | R-002, R-012, D2, and D15 | a record shape, owner, or status-transition rule changes |
 | Documentation freshness and verification-surface drift | `documentation-freshness`, `executable-governance` | R-003, R-013, R-015, D3, D16, and D18 | a source becomes stale, a gate is undocumented, or a command is dropped from a surface |
 | Dependency automation and CI supply-chain maintenance | `dependency-automation` | R-016 and D19 | a dependency ecosystem is added or the update mechanism changes |
-| Conformance claims and validator assurance | `conformance` | R-017, R-018, D20, and D21 | a validator check lacks fixture coverage or a claim needs reproducible evidence |
+| Conformance claims and validator assurance | `conformance` | R-017, R-018, R-028, D20, D21, and D30 | a validator check lacks fixture coverage, the corpus's own coverage claim goes uncomputed, or a claim needs reproducible evidence |
 | Skill format and agent discovery | `skill-format`, `agent-discoverability` | R-004, R-010, and D13 | the format or a supported discovery path changes |
+| Maintainer cold boot: read order and state pre-flight | `agent-discoverability` | R-004, R-027, and D29 | the entry file, the read order, or a supported discovery surface changes |
 | Runtime compatibility claims and distributed-skill trust | `skill-runtime-trust` | R-022 and D25 | a skill adds executable support, a platform-specific adapter, or a named-runtime claim |
 | Specification lifecycle, governance, and licensing | `specification-lifecycle`, `specification-governance`, `licensing` | R-005, R-006, R-008, D6, D7, D9, D10, and D11 | publication, a version/status transition, or licence scope changes |
 | Maintainer memory services and external research aids | `agent-memory` | R-003, R-004, and D3 | repeated research defeats the local records, or a hosted service is proposed |

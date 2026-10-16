@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 2.2 (draft).** This document is the single normative source for the
+**Version 2.4 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -187,6 +187,23 @@ domain the map omits, or drop a tag from the evidence index when the concern is
 gone. A repository without the guide is unaffected, so no immutable record needs
 to change.
 
+### 2.3 migration
+
+Version 2.3 makes step 4 of the change lifecycle name the full artifact set a
+machine-checkable change must ship: the validator update and its `--self-test`,
+the `conformance/` fixture and its `expected.json` entry, the README layout entry
+for any new file, the current-state update, and the version bump. No existing
+record must change, so the migration is documentary.
+
+### 2.4 migration
+
+Version 2.4 makes the corpus's coverage promise computed rather than asserted.
+The companion check now fails when a check the validator defines is never
+reached by a fixture or never produces a finding the manifest records. A
+repository that ships a corpus picks the check up on its next run; a repository
+without one is unaffected, because the promise only exists where the corpus
+does. No record changes and no `MUST` moves.
+
 ## Change lifecycle
 
 Every change to this standard — a rule, a check, or a record — follows the same
@@ -201,9 +218,13 @@ applies to the standard itself as much as to any repository adopting it.
 3. **Decision.** If the finding changes behaviour, record it in
    `docs/decisions.md` (a `D` id) whose `Sources` are registered in
    `docs/evidence-urls.json`.
-4. **Implementation.** Update `STANDARD.md` (it owns the rules); if the rule is
+4. **Implementation.** Update `STANDARD.md` (it owns the rules). If the rule is
    machine-checkable, update `scripts/standards_check.py` and its `--self-test`
-   in the same change.
+   in the same change, and add or extend the `conformance/` fixture with its
+   `conformance/expected.json` entry, so the corpus still exercises every check.
+   Update each affected surface — the README layout tree for any new file,
+   `docs/current-state.md`, and the finding and decision recorded above — and
+   apply the version bump from `## Standard lifecycle`.
 5. **Check.** Run the verification commands in the README. A change is not done
    until the deterministic checks pass *and* the named pair of documents agree:
    `STANDARD.md` (the rules) and `docs/current-state.md` (what is true now) MUST
@@ -337,9 +358,10 @@ A companion check, `scripts/check_conformance.py`, runs the validator against
 the checked-in fixtures under `conformance/` and compares each fixture's exit
 code and finding set with `conformance/expected.json`. It verifies the
 validator, not a repository: the fixtures exist so that a stated result can be
-reproduced by a reader instead of taken on trust. Every check the validator
-performs is exercised by at least one fixture, so a regression in any of them
-appears as a corpus failure rather than as silence.
+reproduced by a reader instead of taken on trust. It audits its own coverage:
+every check the validator defines must be reached by at least one fixture, and
+must return a finding that some fixture's expected results record, so a
+regression in any of them appears as a corpus failure rather than as silence.
 
 Detection is automated; **correction is not.** A recorded decision is a starting
 point for the next reader, not proof.

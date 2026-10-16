@@ -35,6 +35,9 @@ that the underlying source has not changed since.
 | R-023 | What primary platform guidance establishes about executable skills, installation consent, and the evidence needed for runtime compatibility claims | Complete | 2026-10-16 | D25 |
 | R-024 | Whether a coverage-review request should trigger a local evidence audit before targeted official web research | Complete | 2026-10-16 | D26 |
 | R-025 | Whether a concern map that routes fewer domains than the evidence index declares should be a checked failure | Complete | 2026-10-16 | D27 |
+| R-026 | Whether the change lifecycle should name the full artifact set a machine-checkable standard change must ship | Complete | 2026-10-16 | D28 |
+| R-027 | Whether a maintainer agent's cold-boot read order and state pre-flight are complete enough to avoid acting on an incomplete picture | Complete | 2026-10-16 | D29 |
+| R-028 | Whether the corpus's coverage promise needs a computed check once a prose-visible omission is known to have failed elsewhere | Complete | 2026-10-16 | D30 |
 
 ## R-001 — Specification plus validator
 
@@ -209,7 +212,42 @@ that orients a human or an agent. Separately, committed-but-unbuilt work needs o
 discoverable place for both audiences, and a second forward-looking document would
 be another rot surface. Recorded as the basis for a front-door explanation in the
 README and a `## What is next` section in the mutable current-state document.
-Sources: https://agents.md/ , https://llmstxt.org/
+Sources: https://agents.md/ ,
+https://llmstxt.org/
+
+## R-028 — Computed corpus coverage over prose-visible omission
+
+R-018 answered the question "must the corpus cover every check the validator
+performs" with yes, and deliberately chose five more fixtures plus a sentence in
+`STANDARD.md` over a mechanism, on the grounds that the sentence makes a future
+omission visible to a reader. A coverage review of that same class of claim
+found the premise does not hold: the consultation concern map had been routing
+fewer domains than the evidence index declared while every sentence asserting
+completeness still read true. Visibility was not enforcement, and the omission
+was only found by a review nobody was forced to run.
+
+The gap is therefore not whether the corpus must cover the validator — R-018
+settled that — but whether the covering claim is checked by anything at all.
+Standards guidance treats coverage as computed data rather than prose: the W3C
+test method requires at least one test case for every conformance requirement
+and binds each to a stable identifier precisely so that coverage can be
+assessed, and the W3C QA test guidelines require the percentage of assertions
+with at least one test case to be calculated and published. A repository that
+asserts fixture coverage without computing it is doing exactly what those
+guidelines were written to prevent.
+
+The proportionate control is a second pass in the runner that already exists.
+The corpus is thirteen tiny fixtures, so recording which checks each fixture
+reaches, and which of them return a finding the manifest records, costs
+negligibly and needs no new file, no manifest field, and no adopter-facing rule:
+no conformance grade requires an adopter to ship a corpus, so the guard belongs
+with the repository's own self-assurance rather than in the validator. What it
+cannot do is prove branch coverage, only that a check is wired in and that its
+output appears somewhere in the expected results — enough to turn D21's
+unverified sentence into a failing command.
+
+Sources: https://www.w3.org/TR/test-methodology/ ,
+https://www.w3.org/QA/WG/2003/10/TestGL-20031020.html
 
 ## R-015 — Documented gates and definite HTTP statuses
 
@@ -487,3 +525,33 @@ check turns that drift into a failure without turning the coverage review itself
 into a control.
 
 Sources: https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle
+
+## R-026 — The change lifecycle should name every shipped artifact
+
+A procedure that states only its first artifact lets a later one be forgotten.
+Step 4 of the change lifecycle named the validator and its self-test but left the
+conformance fixture, the version bump, and the paired records implicit, so a
+machine-checkable change could satisfy the step while leaving the corpus
+unexercised. Stating the whole artifact set at the point of change turns the
+corpus's fixture promise from a separate assertion into a step the process itself
+demands.
+
+Sources: https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle
+
+## R-027 — Cold-boot coverage for maintainer agents
+
+The durable-context survey (R-004) established agent discoverability as a
+building block: a repository exposes one entry file an agent reads first. This
+repository already had `AGENTS.md` with a read order, but nothing recorded
+whether that entry is complete enough for a cold first run — the read order did
+not name the consultation guide or the conformance claim, and nothing told an
+agent to check working-tree and CI state or to run the gates before changing
+anything. A coverage review found the discoverability concern routed only in its
+skill-format sense, so maintainer onboarding was adjacent prior art, not
+coverage. The registered `agent-discoverability` sources support the premise that
+one discoverable entry file governs how an agent starts; acting on an incomplete
+entry is the failure mode, so the proportionate control is prose in the entry
+file, not a new validator check.
+
+Sources: https://agents.md/ ,
+https://llmstxt.org/
