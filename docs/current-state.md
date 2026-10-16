@@ -34,8 +34,8 @@ Last reviewed: 2026-10-16.
 - [`docs/MAINTENANCE.md`](MAINTENANCE.md) owns the repository-only release
   runbook. Each normative standard version is published as an annotated Git tag
   and GitHub release after the documented checks pass; draft versions are
-  prereleases, and ordinary maintenance commits are not tagged. (checked
-  2026-10-16)
+  prereleases, and no release tag is created solely for ordinary maintenance
+  commits. (checked 2026-10-16)
 - A change lifecycle (research → finding → decision → implementation → check)
   whose recognised research-to-decision edge is machine-enforced: every
   recognised research body cites registered evidence, every decision has an

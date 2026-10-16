@@ -6,9 +6,10 @@ owns maintainer-agent routing.
 
 ## Publish a standard release
 
-Publish only when a commit changes the normative `STANDARD.md` version or changes
-the standard's status. Do not tag ordinary CI, agent-guidance, README, current
-state, or other repository-maintenance commits.
+Publish one release for each normative `STANDARD.md` version or status change.
+Target a verified commit that contains that version; do not create a release tag
+solely for ordinary CI, agent-guidance, README, current-state, or other
+repository-maintenance changes.
 
 1. Start from a clean `main` that is up to date with `origin/main`.
 2. Confirm `CONFORMANCE.md` names the same `STANDARD.md` version and records a
