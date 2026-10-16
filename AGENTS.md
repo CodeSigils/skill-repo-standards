@@ -74,6 +74,17 @@ than restating it. See `STANDARD.md` §The anti-rot core.
 Every rule has exactly one owning file. If you find the same rule asserted in
 two files, one is wrong: keep the owning file and make the other a link.
 
+## Maintenance-document boundary
+
+`STANDARD.md` owns what adopters must implement and this standard's lifecycle;
+`AGENTS.md` owns maintainer-agent routing; `README.md` is the human signpost.
+Do not create `docs/MAINTENANCE.md` merely to repeat those documents. Create it
+only when a recurring, repository-only operation has no current owner and cannot
+be understood from them — for example release publishing, incident response,
+secret rotation, or multi-step dependency triage. It then owns only that
+operational runbook and links to the standard, agent instructions, and current
+state instead of restating them.
+
 ## When you change the standard
 
 Follow the change lifecycle in `STANDARD.md`. It is the single owner of the

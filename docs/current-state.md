@@ -21,8 +21,9 @@ Last reviewed: 2026-10-16.
   `--self-test`; `README.md` and `SECURITY.md`; a `what:`/`why:` commit contract;
   SHA-pinned least-privilege automation. (checked 2026-10-15)
 - CI enforces the commit contract across every non-merge commit introduced by a
-  pull request or push, rather than only testing the checker itself. Dependabot's
-  generated commits remain the recorded D19 exception. (checked 2026-10-16)
+  pull request targeting `main` or a push to `main`, rather than only testing
+  the checker itself. Dependabot's generated commits remain the recorded D19
+  exception. (checked 2026-10-16)
 - Grade B "anti-rot core": a mutable current-state document split from an
   append-only research record; an immutable decision log; a machine-readable
   evidence index with verified dates; the research-once protocol; the
@@ -30,6 +31,9 @@ Last reviewed: 2026-10-16.
 - One owner of truth per audience: `docs/current-state.md` owns what is true
   about this repository, and the runtime payload owns what an installed skill
   does; a payload is kept from linking into `docs/`. (checked 2026-10-15)
+- This repository has no `docs/MAINTENANCE.md`; the threshold for creating one
+  is owned by [`AGENTS.md`'s maintenance-document boundary](../AGENTS.md#maintenance-document-boundary),
+  which the README signposts. (checked 2026-10-16)
 - A change lifecycle (research → finding → decision → implementation → check)
   whose recognised research-to-decision edge is machine-enforced: every
   recognised research body cites registered evidence, every decision has an

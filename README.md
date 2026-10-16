@@ -51,6 +51,14 @@ judges whether a sentence is true.
   [`STANDARD.md` §The reference validator](STANDARD.md). It detects drift; it
   never judges prose.
 
+## Maintaining this repository
+
+`STANDARD.md` describes what adopters implement; this repository's maintainer
+routing is in [`AGENTS.md`](AGENTS.md). A future `docs/MAINTENANCE.md` belongs
+only when a recurring repository-only runbook has no existing owner; see the
+[maintenance-document boundary](AGENTS.md#maintenance-document-boundary). It
+will own that runbook and link outward rather than restate the standard.
+
 ## Use the validator
 
 ```bash
@@ -221,8 +229,8 @@ python3 scripts/verify_urls.py
 ```
 
 CI also runs the commit-message checker over every non-merge commit introduced
-by a pull request or push. Dependabot's generated commits remain the documented
-exception in `docs/decisions.md` D19.
+by a pull request targeting `main` or a push to `main`. Dependabot's generated
+commits remain the documented exception in `docs/decisions.md` D19.
 
 ## Enable the hooks
 
