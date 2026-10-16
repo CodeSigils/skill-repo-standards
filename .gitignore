@@ -1,6 +1,50 @@
 __pycache__/
-*.pyc
+*.py[codz]
+*$py.class
+.pytest_cache/
 .ruff_cache/
+.mypy_cache/
+.pyright/
+.uv-cache/
+
+# Test and coverage artifacts
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+artifacts/
+
+# Virtual environments
 .venv/
-.idea/
+venv/
+env/
+ENV/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+.envrc
+.direnv/
+
+# Local editor/OS files
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100/
+.Trashes/
+Icon?
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Temp and cache
+tmp/
+.tmp/
+.cache/
+*.log
