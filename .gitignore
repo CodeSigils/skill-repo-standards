@@ -42,9 +42,38 @@ Thumbs.db
 *~
 .vscode/
 .idea/
+# Emacs
+*~
+\#*\#
+.\#*
+*.elc
+# Vim/Neovim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+Session.vim
+.netrwhist
+# VS Code/JetBrains
+.vscode/
+.idea/
 
 # Temp and cache
 tmp/
 .tmp/
 .cache/
 *.log
+
+# Agent/tool local state
+.agents/
+.hermes/
+.claude/
+.cursor/
+.gemini/
+.codex/
+.opencode/
+.omo/
+.open-mem/
+.aider.*
+.codex-regression/
