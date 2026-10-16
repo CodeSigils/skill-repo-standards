@@ -220,6 +220,10 @@ kept out of the default local suite:
 python3 scripts/verify_urls.py
 ```
 
+CI also runs the commit-message checker over every non-merge commit introduced
+by a pull request or push. Dependabot's generated commits remain the documented
+exception in `docs/decisions.md` D19.
+
 ## Enable the hooks
 
 ```bash

@@ -20,6 +20,9 @@ Last reviewed: 2026-10-16.
   frontmatter of exactly `name` and `description`; one validation entrypoint with
   `--self-test`; `README.md` and `SECURITY.md`; a `what:`/`why:` commit contract;
   SHA-pinned least-privilege automation. (checked 2026-10-15)
+- CI enforces the commit contract across every non-merge commit introduced by a
+  pull request or push, rather than only testing the checker itself. Dependabot's
+  generated commits remain the recorded D19 exception. (checked 2026-10-16)
 - Grade B "anti-rot core": a mutable current-state document split from an
   append-only research record; an immutable decision log; a machine-readable
   evidence index with verified dates; the research-once protocol; the

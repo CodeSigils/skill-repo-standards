@@ -26,6 +26,7 @@ jobs:
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
@@ -40,6 +41,24 @@ jobs:
 
       - name: Test the commit message checker
         run: python3 scripts/check_commit_messages.py --self-test
+
+      - name: Check proposed non-merge commit messages
+        if: github.event_name != 'workflow_dispatch' && github.actor != 'dependabot[bot]'
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            commit_range="$PR_BASE..$PR_HEAD"
+          else
+            commit_range="$PUSH_BEFORE..$PUSH_AFTER"
+          fi
+          while read -r commit; do
+            python3 scripts/check_commit_messages.py "$commit"
+          done < <(git rev-list --no-merges "$commit_range")
 
       - name: Check the validator against the conformance corpus
         run: python3 scripts/check_conformance.py
