@@ -67,6 +67,15 @@
       ]
     },
     {
+      "name": "consulting-map",
+      "summary": "A consultation guide whose concern map omits a registered evidence domain is reported as a failure.",
+      "exit_code": 1,
+      "hard": [
+        "consulting map does not route evidence domain 'beta-domain'"
+      ],
+      "soft": []
+    },
+    {
       "name": "standard-document",
       "summary": "A STANDARD.md that carries a version and normative language but no lifecycle section, and a current-state document whose review date is past the freshness window.",
       "exit_code": 1,

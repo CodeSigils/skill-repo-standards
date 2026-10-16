@@ -504,3 +504,20 @@ evidence first, and searches official guidance only for a demonstrated gap.
 This preserves the evidence-first workflow while keeping the proportionality
 rule intact: a concern warrants research when it is recurring and
 decision-worthy, but warrants a control only when its failure mode is observed.
+
+## Decision: Enforce consultation-map coverage of the evidence index
+
+- ID: D27
+- Status: accepted
+- Decided: 2026-10-16
+- Sources: https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle
+- Recheck: when the concern map changes shape, or a repository is found that keeps a guide the check cannot recognise
+- Context: The consultation guide's concern map is prose, and nothing detected a map that routes fewer domains than the evidence index declares.
+- Evidence appraisal: The demonstrated drift, a registry of fourteen domains reached by four routes, is a named failure mode; the fix is a narrow check over an existing record rather than a new control.
+- Outcome check: The validator fails when a registered evidence domain has no route, and the corpus fixture proves the failure.
+- Evidence profile: primary
+
+Rationale: A concern map with fewer routes than the evidence index declares is
+exactly the drift a coverage review is meant to catch, and prose alone did not
+prevent it. The check binds only when the guide exists, so it is a compatible
+extension, and a corpus fixture keeps it honest.

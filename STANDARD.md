@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 2.1 (draft).** This document is the single normative source for the
+**Version 2.2 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -110,6 +110,12 @@ record trustworthy and findable.
   applicability, material limitations, and a recheck trigger in the research
   finding or decision. For a material multi-option choice, record the
   alternatives and consequences. Do not silently repeat a search.
+- **Consultation coverage.** When a repository keeps a concern-oriented
+  consultation guide at `docs/research/consulting.md`, its concern map MUST
+  route every `domain_tag` declared in the evidence index, so each registered
+  evidence domain is reachable from the guide. A registered domain with no route
+  is a failure; a route with no registered domain is advisory, because it signals
+  a dead route. A repository without the guide is unaffected.
 - **Traceable research evidence.** A recognised `R-###` entry MUST have a body
   section with at least one source URL, and every source URL in that body MUST be
   registered in `docs/evidence-urls.json`. When both the research register and
@@ -171,6 +177,15 @@ rewritten. A new record that opts into the profile must supply all its fields;
 use `constrained` only with a primary-source exception. A material multi-option
 decision MAY use the Grade C trade-study template before adopting any scoring
 control.
+
+### 2.2 migration
+
+Version 2.2 makes the consultation guide's concern map checkable. When a
+repository keeps `docs/research/consulting.md`, its concern map must route every
+`domain_tag` declared in `docs/evidence-urls.json`. Add a row for any registered
+domain the map omits, or drop a tag from the evidence index when the concern is
+gone. A repository without the guide is unaffected, so no immutable record needs
+to change.
 
 ## Change lifecycle
 
@@ -303,7 +318,11 @@ It verifies:
 11. the review cadence — `docs/current-state.md` carries a parseable
     `Last reviewed:` date within the maximum age;
 12. the cross-surface consistency of commands — a script a hook or workflow
-    executes is documented in the README verification block.
+    executes is documented in the README verification block;
+13. consultation coverage — when `docs/research/consulting.md` exists, every
+    `domain_tag` declared in the evidence index appears in its concern map (a
+    registered domain with no route is hard; a route with no registered domain is
+    soft).
 
 The decision identifier is **soft**, so a repository can begin with an
 unidentified decision log. An absent or unrecognised research register is also
@@ -335,6 +354,7 @@ point for the next reader, not proof.
       `docs/research/index.md` (append-only); `docs/decisions.md`; a registered
       `docs/evidence-urls.json`; the research-once protocol with a proportionate
       evidence appraisal; traceable recognised research evidence; one owner of
-      truth; the canonical-owner rule.
+      truth; the canonical-owner rule; consultation coverage when a guide is
+      present.
 - [ ] **Grade C** — each additional control names the failure mode it prevents;
       a material multi-option decision may use the trade-study template.

@@ -172,6 +172,64 @@ def registered_source_types(root: Path) -> dict[str, str]:
     }
 
 
+def registered_domain_tags(root: Path) -> set[str]:
+    """Return the evidence-registry domain tags declared for source routing."""
+    text = _read_path(root / "docs" / "evidence-urls.json")
+    if text is None:
+        return set()
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        return set()
+    entries = data.get("urls") if isinstance(data, dict) else None
+    if not isinstance(entries, list):
+        return set()
+    return {
+        entry["domain_tag"]
+        for entry in entries
+        if isinstance(entry, dict)
+        and isinstance(entry.get("domain_tag"), str)
+        and entry["domain_tag"]
+    }
+
+
+def consulting_map_tags(root: Path) -> set[str] | None:
+    """Return the domain tags routed by the consultation concern map.
+
+    Returns ``None`` when the repository keeps no consultation guide, so a
+    reader can tell "no guide" apart from "a guide with an unrecognised map".
+    Only the ``domain_tag`` column of the concern-map table is read, which keeps
+    backticked tags in the workflow steps from being mistaken for routes.
+    """
+    text = _read_path(root / "docs" / "research" / "consulting.md")
+    if text is None:
+        return None
+    column: int | None = None
+    in_map = False
+    tags: set[str] = set()
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            if in_map:
+                break
+            if "concern map" in stripped.lower():
+                in_map = True
+                column = None
+            continue
+        if not in_map or not stripped.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if column is None:
+            for index, cell in enumerate(cells):
+                if "domain_tag" in cell:
+                    column = index
+                    break
+            continue
+        if column < len(cells):
+            tags.update(re.findall(r"`([a-z][a-z0-9-]*)`", cells[column]))
+    return tags
+
+
 def research_blocks(text: str) -> dict[str, str]:
     """Return each recognised research entry body keyed by its R identifier."""
     matches = list(RESEARCH_BODY_RE.finditer(text))
@@ -596,6 +654,36 @@ def check_consistency(root: Path) -> list[Finding]:
     return findings
 
 
+def check_consulting(root: Path) -> list[Finding]:
+    """Check that the consultation map routes every declared evidence domain.
+
+    The check is inert for a repository without a consultation guide and for one
+    whose evidence index declares no domain tags, so an adopter with neither is
+    unaffected. A guide whose map cannot be recognised is advisory for the same
+    reason an unrecognised research register is: the shape is missing, not the
+    substance.
+    """
+    tags = consulting_map_tags(root)
+    if tags is None:
+        return []
+    registered = registered_domain_tags(root)
+    if not registered:
+        return []
+    if not tags:
+        return [soft("consulting guide has no recognised concern map")]
+    findings: list[Finding] = []
+    for tag in sorted(registered - tags):
+        findings.append(hard(f"consulting map does not route evidence domain {tag!r}"))
+    for tag in sorted(tags - registered):
+        findings.append(
+            soft(
+                f"consulting map routes {tag!r}, which the evidence index does not "
+                "declare"
+            )
+        )
+    return findings
+
+
 def check_target(root: Path, today: dt.date, max_age_days: int) -> list[Finding]:
     """Run every check and return the combined findings."""
     findings: list[Finding] = []
@@ -604,6 +692,7 @@ def check_target(root: Path, today: dt.date, max_age_days: int) -> list[Finding]
     findings += check_decisions(root)
     findings += check_research(root)
     findings += check_evidence_index(root, today, max_age_days)
+    findings += check_consulting(root)
     findings += check_payload_boundary(root)
     findings += check_consistency(root)
     return findings
@@ -677,6 +766,7 @@ def run_self_test() -> int:
     """Mutate a valid fixture and assert the checks classify each mutation."""
     today = dt.date(2026, 10, 15)
     base = Path(tempfile.mkdtemp(prefix="standards-check-"))
+    cover = base.parent / f"{base.name}-consulting"
     try:
         _valid_fixture(base)
         if check_target(base, today, 180):
@@ -863,6 +953,86 @@ def run_self_test() -> int:
         ):
             return 1
 
+        shutil.copytree(base, cover, ignore=shutil.ignore_patterns("mutations", "multi"))
+        _write(
+            cover,
+            "docs/evidence-urls.json",
+            json.dumps(
+                {
+                    "version": 1,
+                    "description": "Fixture index with routed domains.",
+                    "urls": [
+                        {
+                            "name": "Example",
+                            "url": "https://example.com/docs/",
+                            "expected_statuses": [200],
+                            "source_type": "official_docs",
+                            "last_verified": "2026-10-15",
+                        },
+                        {
+                            "name": "Alpha",
+                            "url": "https://example.com/alpha",
+                            "expected_statuses": [200],
+                            "domain_tag": "alpha-domain",
+                            "source_type": "official_docs",
+                            "last_verified": "2026-10-15",
+                        },
+                        {
+                            "name": "Beta",
+                            "url": "https://example.com/beta",
+                            "expected_statuses": [200],
+                            "domain_tag": "beta-domain",
+                            "source_type": "official_docs",
+                            "last_verified": "2026-10-15",
+                        },
+                    ],
+                }
+            ),
+        )
+
+        def coverage(map_rows: str) -> list[Finding]:
+            _write(
+                cover,
+                "docs/research/consulting.md",
+                "# Research consultation\n\n"
+                "## Concern map\n\n"
+                "| Concern | `domain_tag` | Read first | Recheck when |\n"
+                "| --- | --- | --- | --- |\n"
+                + map_rows,
+            )
+            return check_target(cover, today, 180)
+
+        if any(severity == HARD for severity, _ in coverage(
+            "| Alpha | `alpha-domain` | R-001 | never |\n"
+            "| Beta | `beta-domain` | R-001 | never |\n"
+        )):
+            print("FAIL: self-test rejected a fully routed concern map", file=sys.stderr)
+            return 1
+
+        missing = coverage("| Alpha | `alpha-domain` | R-001 | never |\n")
+        if not any(
+            severity == HARD and "beta-domain" in message
+            for severity, message in missing
+        ):
+            print(
+                "FAIL: self-test did not reject a concern map that omits a "
+                "registered evidence domain",
+                file=sys.stderr,
+            )
+            return 1
+
+        if not any(severity == SOFT for severity, _ in coverage(
+            "| Alpha | `alpha-domain` | R-001 | never |\n"
+            "| Beta | `beta-domain` | R-001 | never |\n"
+            "| Gamma | `gamma-domain` | R-001 | never |\n"
+        )):
+            print(
+                "FAIL: self-test did not flag a concern-map route with no "
+                "registered evidence domain",
+                file=sys.stderr,
+            )
+            return 1
+
         multi = base / "multi"
         if multi.exists():
             shutil.rmtree(multi)
@@ -874,6 +1044,7 @@ def run_self_test() -> int:
             return 1
     finally:
         shutil.rmtree(base, ignore_errors=True)
+        shutil.rmtree(cover, ignore_errors=True)
 
     print("PASS: standards_check.py self-tests")
     return 0

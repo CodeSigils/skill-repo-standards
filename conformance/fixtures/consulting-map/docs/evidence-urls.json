@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "description": "Evidence index fixture with two declared domains.",
+  "urls": [
+    {
+      "name": "Fixture source alpha",
+      "url": "https://example.invalid/alpha",
+      "expected_statuses": [200],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "alpha-domain",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "{{TODAY}}"
+    },
+    {
+      "name": "Fixture source beta",
+      "url": "https://example.invalid/beta",
+      "expected_statuses": [200],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "beta-domain",
+      "source_type": "community",
+      "status": "active",
+      "last_verified": "{{TODAY}}"
+    }
+  ]
+}

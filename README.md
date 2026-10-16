@@ -112,6 +112,16 @@ material multi-option choice only, use the optional Grade C
 │       │   ├── README.md
 │       │   └── docs
 │       │       └── decisions.md
+│       ├── consulting-map
+│       │   ├── README.md
+│       │   ├── SECURITY.md
+│       │   └── docs
+│       │       ├── current-state.md
+│       │       ├── decisions.md
+│       │       ├── evidence-urls.json
+│       │       └── research
+│       │           ├── consulting.md
+│       │           └── index.md
 │       ├── evidence-shape
 │       │   ├── README.md
 │       │   ├── SECURITY.md

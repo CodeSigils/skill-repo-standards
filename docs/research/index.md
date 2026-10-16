@@ -34,6 +34,7 @@ that the underlying source has not changed since.
 | R-022 | Whether the consultation map covers recurring maintenance concerns and distinguishes repository security from distributed-skill trust and runtime compatibility | Complete | 2026-10-16 | D25 |
 | R-023 | What primary platform guidance establishes about executable skills, installation consent, and the evidence needed for runtime compatibility claims | Complete | 2026-10-16 | D25 |
 | R-024 | Whether a coverage-review request should trigger a local evidence audit before targeted official web research | Complete | 2026-10-16 | D26 |
+| R-025 | Whether a concern map that routes fewer domains than the evidence index declares should be a checked failure | Complete | 2026-10-16 | D27 |
 
 ## R-001 — Specification plus validator
 
@@ -477,3 +478,12 @@ merely because a coverage review named a concern.
 
 Sources: https://ebse.webspace.durham.ac.uk/ ,
 https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle
+
+## R-025 — Consultation-map coverage as a checked failure
+
+A concern map can silently route fewer domains than the evidence index declares.
+The demonstrated case mapped four routes over fourteen declared domains. A narrow
+check turns that drift into a failure without turning the coverage review itself
+into a control.
+
+Sources: https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle

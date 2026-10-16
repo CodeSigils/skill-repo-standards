@@ -89,6 +89,12 @@ Last reviewed: 2026-10-16.
   review now audits the map, registry, and recent decisions before targeted
   official web research; a concern alone does not justify a control. The README
   and agent instructions link to this owner. (checked 2026-10-16)
+- The reference validator enforces consultation coverage: when a repository
+  keeps `docs/research/consulting.md`, its concern map must route every
+  `domain_tag` declared in the evidence index. A registered domain with no route
+  is a failure and an unreachable map tag is advisory, so the demonstrated
+  map-versus-registry drift is a checked failure rather than prose alone.
+  (checked 2026-10-16)
 
 ## What is next
 
