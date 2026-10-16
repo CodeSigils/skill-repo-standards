@@ -4,7 +4,7 @@ This document is **mutable**: it owns what is true *now*. Every claim carries a
 check date. It is the opposite of `docs/research/index.md`, which is append-only
 and never retro-edited.
 
-Last reviewed: 2026-10-15.
+Last reviewed: 2026-10-16.
 
 ## What this repository is
 
@@ -79,6 +79,16 @@ Last reviewed: 2026-10-15.
   Its declared shape and official-source requirement are validator-enforced; a
   Grade C trade-study template is available only for material multi-option
   choices. (checked 2026-10-15)
+- The standalone consultation guide now routes every registered concern domain,
+  including automation, validation, lifecycle, discovery, and documentation
+  drift. It separately identifies runtime compatibility and distributed-skill
+  trust: executable support and host approvals are not established by a portable
+  `SKILL.md` format alone. This is a research boundary, not a new universal
+  control. (checked 2026-10-16)
+- The consultation guide owns a seven-step evidence-first workflow. A coverage
+  review now audits the map, registry, and recent decisions before targeted
+  official web research; a concern alone does not justify a control. The README
+  and agent instructions link to this owner. (checked 2026-10-16)
 
 ## What is next
 

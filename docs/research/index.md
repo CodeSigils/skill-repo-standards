@@ -31,6 +31,9 @@ that the underlying source has not changed since.
 | R-019 | Whether recurring concerns need a standalone, concern-oriented consultation path so official guidance is located before a project decision | Complete | 2026-10-15 | D22 |
 | R-020 | Which evidence-first controls are enforceable in a proportionate skill-repository standard | Complete | 2026-10-15 | D23 |
 | R-021 | Which evidence-appraisal, source-sufficiency, and material-trade-study controls improve decisions without inventing a universal score | Complete | 2026-10-15 | D24 |
+| R-022 | Whether the consultation map covers recurring maintenance concerns and distinguishes repository security from distributed-skill trust and runtime compatibility | Complete | 2026-10-16 | D25 |
+| R-023 | What primary platform guidance establishes about executable skills, installation consent, and the evidence needed for runtime compatibility claims | Complete | 2026-10-16 | D25 |
+| R-024 | Whether a coverage-review request should trigger a local evidence audit before targeted official web research | Complete | 2026-10-16 | D26 |
 
 ## R-001 — Specification plus validator
 
@@ -388,3 +391,89 @@ https://doi.org/10.1016/j.infsof.2021.106555 ,
 https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle ,
 https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html ,
 https://ops.fhwa.dot.gov/seits/sections/section3/3_4_5.html
+
+## R-022 — Consultation coverage, distributed-skill trust, and runtime compatibility
+
+The consultation map exposed only four concerns even though the evidence registry
+already held sources for decision records, documentation freshness, dependency
+automation, conformance, discovery, lifecycle, licensing, and maintainer memory.
+Those existing findings are reusable but were not reachable by concern.
+
+The Agent Skills specification permits executable `scripts/` and an optional
+`compatibility` declaration. It therefore defines an artifact format, not a
+proof that a named runtime installs, authorizes, or executes a skill safely.
+Claude Code documents additional invocation, dynamic-context, and permission
+features beyond the portable format. Its workspace trust requirement for plugin
+loading is further evidence that host approval and executable support files are
+deployment concerns rather than properties inferred from `SKILL.md` alone.
+
+The appropriate response is a complete lookup map and a distinct research
+concern for runtime compatibility and distributed-skill trust. It does not add a
+universal safety or compatibility control: a target repository decides whether
+its executable support, adapter, or runtime claim creates that failure mode.
+
+Sources: https://agentskills.io/specification ,
+https://code.claude.com/docs/en/skills
+
+## R-023 — Evidence boundary for executable skills and runtime claims
+
+**Question and scope.** What can a shared skill-repository standard responsibly
+say about executable support, distribution trust, and runtime compatibility
+without treating one host's safety model as portable policy? This finding covers
+skills that ship scripts, adapters, plugin metadata, hooks, MCP configuration,
+or a claim about a named runtime. It does not prescribe a runtime's installation
+path or permission model.
+
+**Evidence and appraisal.** The Agent Skills specification defines a portable
+directory format that may contain scripts and an optional compatibility
+declaration, but it leaves supported languages and host behavior to the agent
+implementation. OpenAI documents that a plugin can package skills with MCP
+configuration, so instruction files and controlled actions remain separate
+surfaces. Claude Code likewise follows the common format but adds invocation,
+dynamic-context, and permission extensions. Gemini CLI documents remote-install
+confirmation and per-activation consent because skills can execute scripts and
+access files. Hermes documents source provenance, content scanning, quarantine,
+and update checks for installed skills.
+
+**Finding.** Format validity, installation/discovery, and representative runtime
+workflow are separate claims; success at one level does not establish the next.
+Executable support, an adapter, or a distribution package therefore creates a
+repository-specific trust boundary. The evidence supports requiring an explicit
+target, version, installation or discovery procedure, and recorded limitations
+before a repository upgrades a compatibility claim. It does not support a common
+mandatory scanner, consent flow, or trust policy, because the hosts deliberately
+implement those controls differently.
+
+**Limitations and recheck.** This is official documentation for current intended
+behavior, not an installation test. Recheck it when a repository adds executable
+support or a runtime-specific adapter, makes a portability or safety claim, or a
+named host changes its skill/distribution model. Reuse the format evidence only
+for format questions; record a named-runtime test before asserting installation
+or workflow compatibility.
+
+Sources: https://agentskills.io/specification ,
+https://developers.openai.com/plugins/concepts/skills ,
+https://code.claude.com/docs/en/skills ,
+https://geminicli.com/docs/cli/using-agent-skills/ ,
+https://hermes-agent.nousresearch.com/docs/user-guide/features/skills/
+
+## R-024 — Coverage review as an evidence-first research trigger
+
+A concern map prevents repeated research only while it remains aligned with the
+evidence registry and the decisions it supports. Evidence-based software
+engineering begins with an answerable question and available evidence before
+looking outward; GOV.UK's assurance guidance makes the sequence explicit by
+turning evidence into an accountable decision. For this repository, a coverage
+review is the answerable question: whether a recurring, decision-worthy concern
+can be located through current, applicable recorded evidence.
+
+The smallest reliable workflow is to compare the concern map with registered
+source domains and recent decisions first. Only an unmatched concern, stale or
+inapplicable finding, or absent authoritative source warrants targeted official
+web research. The resulting `R-###` finding records the scope, applicability,
+limitations, and recheck trigger; a `D#` follows only if the finding changes
+repository behaviour. This avoids both silent re-research and adopting a control
+merely because a coverage review named a concern.
+
+Sources: https://ebse.webspace.durham.ac.uk/ ,
+https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle

@@ -5,33 +5,39 @@ depend on any personal lab or another repository. The normative protocol is
 [`STANDARD.md` §The anti-rot core](../../STANDARD.md#the-anti-rot-core); this
 file makes its existing records discoverable before a researcher looks outward.
 
-## Consult first
+## Evidence-first workflow
 
-For a research-sensitive concern, in order:
+For every research-sensitive concern or coverage review, in order:
 
-1. Search [`../decisions.md`](../decisions.md) for an accepted, superseded, or
-   deferred decision.
-2. Search [`../evidence-urls.json`](../evidence-urls.json) by `domain_tag` for
-   registered primary sources and check their `last_verified` date.
-3. Search [`index.md`](index.md) for the append-only finding that enables the
-   decision.
-4. Reuse a current, applicable result with a link; otherwise research official
-   guidance, append a finding, then record any behaviour-changing decision.
+1. **Classify the request.** Identify the concern and whether the user is asking
+   for a decision, an implementation, or a review of the concern map itself.
+2. **Consult local evidence first.** Use the concern map, then search
+   [`../decisions.md`](../decisions.md),
+   [`../evidence-urls.json`](../evidence-urls.json) by `domain_tag`, and
+   [`index.md`](index.md). Check source freshness and the finding's scope.
+3. **Reuse or revalidate.** Link to a current, applicable result. Revalidate a
+   volatile, version-sensitive, or decision-critical fact at the point of use;
+   do not repeat a search silently.
+4. **Audit coverage when asked.** Compare the concern map against the evidence
+   registry and recent decisions. If a recurring, decision-worthy concern has
+   no route, no current applicable finding, or no authoritative source, research
+   official guidance on the web. A coverage review is not by itself a reason to
+   add a control.
+5. **Record the finding.** Append an `R-###` entry with the question and scope,
+   sources and applicability, material limitations, check date, and recheck
+   trigger. Register every cited source in the evidence index.
+6. **Decide only when behaviour changes.** Create a linked `D#` record with the
+   [evidence-appraisal profile](evidence-appraisal.md) and an observable outcome
+   check. For a material multi-option choice, also record alternatives and
+   consequences; use the [trade-study template](trade-study.md) only when its
+   materiality warrants it.
+7. **Implement and verify proportionately.** Add only the control justified by
+   the observed failure mode, update the machine-checkable validator and its
+   self-test where applicable, then run the documented deterministic checks.
 
-The machine-readable evidence index is the source registry. This guide owns
-only the query order and concern map; it must not become a second source list.
-
-## Appraise before deciding
-
-Before a behaviour-changing decision, state the question and scope, compare the
-source's authority and applicability to the repository, name material
-limitations, and record the recheck trigger. For a material multi-option choice,
-record the alternatives and consequences in the decision rationale. Use the
-[evidence-appraisal profile](evidence-appraisal.md) for a new
-behaviour-changing decision, and the [trade-study template](trade-study.md)
-only when its materiality warrants it. The validator enforces source
-provenance, freshness, the research-to-decision link, and an opted-in profile's
-shape; it deliberately cannot score the truth or weight of prose evidence.
+The machine-readable evidence index is the source registry. This guide owns the
+workflow and concern map; it must not become a second source list or a generic
+policy catalogue.
 
 ## Concern map
 
@@ -41,6 +47,14 @@ shape; it deliberately cannot score the truth or weight of prose evidence.
 | Repository security, secrets, and ignore rules | `repository-security` | R-019 and D22 | GitHub changes the guidance or the target uses another hosting platform |
 | Evidence appraisal and material trade studies | `research-consultation` | R-020 and D23 | a decision needs a multi-option comparison or its evidence changes |
 | Evidence-appraisal profile and source sufficiency | `research-consultation` | R-021 and D24 | a profile is incomplete or a primary source is unavailable |
+| Decision records and ownership of repository facts | `decision-records` | R-002, R-012, D2, and D15 | a record shape, owner, or status-transition rule changes |
+| Documentation freshness and verification-surface drift | `documentation-freshness`, `executable-governance` | R-003, R-013, R-015, D3, D16, and D18 | a source becomes stale, a gate is undocumented, or a command is dropped from a surface |
+| Dependency automation and CI supply-chain maintenance | `dependency-automation` | R-016 and D19 | a dependency ecosystem is added or the update mechanism changes |
+| Conformance claims and validator assurance | `conformance` | R-017, R-018, D20, and D21 | a validator check lacks fixture coverage or a claim needs reproducible evidence |
+| Skill format and agent discovery | `skill-format`, `agent-discoverability` | R-004, R-010, and D13 | the format or a supported discovery path changes |
+| Runtime compatibility claims and distributed-skill trust | `skill-runtime-trust` | R-022 and D25 | a skill adds executable support, a platform-specific adapter, or a named-runtime claim |
+| Specification lifecycle, governance, and licensing | `specification-lifecycle`, `specification-governance`, `licensing` | R-005, R-006, R-008, D6, D7, D9, D10, and D11 | publication, a version/status transition, or licence scope changes |
+| Maintainer memory services and external research aids | `agent-memory` | R-003, R-004, and D3 | repeated research defeats the local records, or a hosted service is proposed |
 
 Use the concern map to locate sources, not to apply a generic policy. The target
 repository owns the decision and may have a narrower scope.

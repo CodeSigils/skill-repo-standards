@@ -64,13 +64,15 @@ not run.
 
 ## Consult research before re-researching
 
-This repository is standalone: research-sensitive work starts with its own
-[consultation guide](docs/research/consulting.md), then its decision log,
-machine-readable evidence registry, and append-only research record. The guide
-maps recurring concerns to `domain_tag` values in `docs/evidence-urls.json`; it
-does not require a personal lab or another repository to answer the question.
-Agents receive the same route from [`AGENTS.md`](AGENTS.md), so a human and an
-agent consult one canonical process rather than separate instructions.
+This repository is standalone: research-sensitive work follows the canonical
+[evidence-first workflow](docs/research/consulting.md#evidence-first-workflow).
+It starts with the concern map, decision log, evidence registry, and append-only
+research record before looking outward. When a user requests a coverage review,
+first compare the map with the registry and recent decisions; search official
+web guidance only for a recurring, decision-worthy gap with no current,
+applicable evidence. Agents receive the same route from [`AGENTS.md`](AGENTS.md),
+so a human and an agent consult one canonical process rather than separate
+instructions.
 
 For a new behaviour-changing decision, use the compact
 [evidence-appraisal profile](docs/research/evidence-appraisal.md). For a

@@ -11,7 +11,7 @@
       "domain_tag": "skill-format",
       "source_type": "official_docs",
       "status": "active",
-      "last_verified": "2026-10-15"
+      "last_verified": "2026-10-16"
     },
     {
       "name": "Agent Skills authoring best practices",
@@ -372,6 +372,50 @@
       "source_type": "community",
       "status": "active",
       "last_verified": "2026-10-15"
+    },
+    {
+      "name": "Claude Code skills",
+      "url": "https://code.claude.com/docs/en/skills",
+      "expected_statuses": [200],
+      "required_text": ["Skills"],
+      "source_section": "docs/research/index.md",
+      "domain_tag": "skill-runtime-trust",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-16"
+    },
+    {
+      "name": "OpenAI plugin skills",
+      "url": "https://developers.openai.com/plugins/concepts/skills",
+      "expected_statuses": [200],
+      "required_text": ["Skills"],
+      "source_section": "docs/research/index.md",
+      "domain_tag": "skill-runtime-trust",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-16"
+    },
+    {
+      "name": "Gemini CLI skill management",
+      "url": "https://geminicli.com/docs/cli/using-agent-skills/",
+      "expected_statuses": [200],
+      "required_text": ["Security and consent"],
+      "source_section": "docs/research/index.md",
+      "domain_tag": "skill-runtime-trust",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-16"
+    },
+    {
+      "name": "Hermes skills system",
+      "url": "https://hermes-agent.nousresearch.com/docs/user-guide/features/skills/",
+      "expected_statuses": [200],
+      "required_text": ["Security scanning"],
+      "source_section": "docs/research/index.md",
+      "domain_tag": "skill-runtime-trust",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-16"
     }
   ]
 }

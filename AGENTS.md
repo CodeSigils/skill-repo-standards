@@ -21,11 +21,15 @@ Before changing anything, read:
 ## Before re-researching
 
 Follow the research-once protocol in `STANDARD.md` through the canonical
-[`docs/research/consulting.md`](docs/research/consulting.md) guide. Search `docs/decisions.md`,
+[`docs/research/consulting.md`](docs/research/consulting.md) guide. Follow its
+[evidence-first workflow](docs/research/consulting.md#evidence-first-workflow)
+without substituting a local variant. Search `docs/decisions.md`,
 `docs/evidence-urls.json`, and `docs/research/index.md` before performing new
 research. Reuse a recorded decision when its scope and freshness fit; revalidate
 volatile facts at the point of use; record whether the result was reused,
-revalidated, superseded, or newly discovered.
+revalidated, superseded, or newly discovered. When the user asks for a coverage
+review, audit the concern map against the registry and recent decisions first;
+search official web guidance only for a recurring, decision-worthy gap.
 
 For a new behaviour-changing decision, use
 [`docs/research/evidence-appraisal.md`](docs/research/evidence-appraisal.md).

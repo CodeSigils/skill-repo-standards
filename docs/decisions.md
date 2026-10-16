@@ -459,3 +459,48 @@ exception. The existing records remain immutable and are not retrofitted with
 invented appraisals. The Grade C trade-study template covers material choices
 without requiring weights, scoring, sensitivity analysis, an evidence hierarchy,
 or recommendation-strength labels where no observed failure justifies them.
+
+## Decision: Expand consultation coverage and distinguish distributed-skill trust
+
+- ID: D25
+- Status: accepted
+- Decided: 2026-10-16
+- Sources: https://agentskills.io/specification , https://code.claude.com/docs/en/skills
+- Recheck: when a runtime-specific safety or compatibility claim is proposed, or the concern map no longer covers every evidence-registry domain
+- Context: whether the concern-oriented consultation guide makes the records already held by this repository discoverable, and whether repository security alone covers executable distributed skills
+- Evidence appraisal: The existing registry contains sources for more recurring concerns than the four-row guide exposed. The Agent Skills format permits executable support and compatibility declarations, while Claude Code adds runtime-specific invocation, dynamic-context, permission, and workspace-trust behavior. These sources establish a research boundary, not one portable safety policy.
+- Outcome check: every registered domain tag has a route in the consultation guide; a future runtime-claim or executable-support decision starts at the new concern rather than inferring safety or compatibility from the common format
+- Evidence profile: primary
+
+Rationale: The guide existed to prevent repeated research, but its narrow map
+hid recorded evidence for automation, validation, lifecycle, discovery, and
+documentation drift. Those routes now point to the existing research and
+decisions without copying the source registry. A separate runtime-compatibility
+and distributed-skill-trust concern closes a material conceptual gap: secrets
+and repository security protect the source repository, whereas executable
+support, adapters, installation, and host approvals affect the artifact after
+distribution. The standard does not make compatibility testing or an executable
+audit universal because neither has a universal failure mode. A repository that
+makes such a claim or ships such support can research and justify the narrow
+control it needs.
+
+## Decision: Treat coverage reviews as evidence-first triggers
+
+- ID: D26
+- Status: accepted
+- Decided: 2026-10-16
+- Sources: https://ebse.webspace.durham.ac.uk/ , https://www.gov.uk/government/publications/evidence-led-assurance-for-the-software-development-lifecycle
+- Recheck: when a coverage review reveals a concern that cannot be reached through the map, current evidence, or recent decisions
+- Context: whether a request to review research coverage should begin with broad web research or an audit of the repository's recorded evidence
+- Evidence appraisal: EBSE and GOV.UK both support a sequence from an answerable question through relevant evidence to an accountable decision. The repository's concern map, registry, and decision log make that local audit possible; targeted official research is appropriate only when the audit demonstrates a gap.
+- Outcome check: a coverage review can identify every registered source domain through the map, and a newly identified recurring concern produces a dated R finding before any control is proposed
+- Evidence profile: primary
+
+Rationale: A coverage review previously had no explicit trigger, so an agent
+could either repeat web research that the repository had already recorded or
+mistake a list of concerns for a mandate to add controls. The consultation guide
+now classifies coverage review as a research-sensitive request, audits local
+evidence first, and searches official guidance only for a demonstrated gap.
+This preserves the evidence-first workflow while keeping the proportionality
+rule intact: a concern warrants research when it is recurring and
+decision-worthy, but warrants a control only when its failure mode is observed.
