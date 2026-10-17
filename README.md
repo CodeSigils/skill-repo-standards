@@ -227,10 +227,18 @@ python3 scripts/standards_check.py --self-test
 python3 scripts/check_commit_messages.py --self-test
 python3 scripts/check_conformance.py
 python3 scripts/check_conformance.py --self-test
-python3 scripts/gate_check.py
 python3 scripts/gate_check.py --self-test
 python3 scripts/verify_urls.py --self-test
 ```
+
+`python3 scripts/gate_check.py` is an optional, environment-dependent check.
+It returns 2 when it cannot establish an assertion, including when repository
+protection or release data is unavailable. Required-check matching is limited to
+workflow job names and literal single-axis matrices; other matrices are reported
+as unavailable. An unmatched name is also unavailable because an external
+provider may supply it. Release checks support npm `package.json`, `v` tags and the
+npm registry. They check published version membership, not artifact contents.
+Rulesets and external status providers are outside this check's coverage.
 
 The live external-reference check makes network requests and is intentionally
 kept out of the default local suite:

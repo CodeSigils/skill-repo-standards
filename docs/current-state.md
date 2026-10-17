@@ -129,12 +129,10 @@ Last reviewed: 2026-10-17.
   CI-rot incident is `R-031`, its decision is `D33`, and that decision registers
   a `vcs-hygiene` concern route covering state-changing git/VCS actions, branch
   lifecycle, and the release surface. The change adds a compatible extension:
-  `scripts/gate_check.py` reports three drift conditions a pull-request review
-  cannot see (a required check name that resolves to no workflow job, an evidence
-  window that does not exceed the schedule cadence, and a publish workflow whose
-  version, tag, and registry artifact disagree), with no adopter-facing `MUST`.
+  `scripts/gate_check.py` reports selected required-check and release
+  disagreements and marks unsupported or unreadable inputs unavailable; it
+  cannot establish full scheduled-gate coverage or infer evidence refresh policy.
   (checked 2026-10-17)
-
 - The standard's own vocabulary is disambiguated at its point of ownership:
   `STANDARD.md` §Normative language distinguishes research and validator
   findings. Recorded as `R-032` and `D34`, and

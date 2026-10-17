@@ -7,16 +7,15 @@ and decided in `docs/decisions.md` D33:
 
 1. **Required checks resolve to a job.** Every branch-protection required status
    check name must resolve to a job or a matrix-expanded job name in
-   `.github/workflows`. A required name no job can ever satisfy blocks every
-   pull request silently.
-2. **Evidence window exceeds schedule cadence.** The freshness window the
-   validator enforces (`--max-age-days`, default 180) must be strictly greater
-   than the cadence of the shortest `schedule:` cron in the workflows. A window
-   shorter than the cadence goes red periodically with no code change.
+   `.github/workflows`. An unmatched name is inconclusive because an external
+   provider may supply the check.
+2. **Evidence window versus schedule.** The checker cannot infer which schedule
+   refreshes evidence or which freshness window a repository actually enforces.
 3. **A scheduled workflow must run a full gate.** If a workflow has a
    `schedule:` trigger, at least one of its jobs must be able to run on a
    scheduled event — a workflow whose every job is gated by an event-name
-   condition excluding `schedule` never exercises the gate on a cadence.
+   condition excluding `schedule` never exercises the gate on a cadence. A
+   runnable job alone does not establish that the full gate runs.
 4. **The release surface agrees.** A repository with a publish workflow must not
    disagree between its package version, its `v*` tags, and its published
    registry artifact: a tag whose package version differs from the tag name, or
@@ -35,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -112,6 +112,8 @@ def parse_workflow(path: Path) -> dict:
     matrix_values: list[str] = []
     matrix_key = False
     matrix_parsed = False
+    matrix_axes = 0
+    matrix_complex = False
 
     for line in lines:
         if line.startswith("jobs:"):
@@ -125,7 +127,7 @@ def parse_workflow(path: Path) -> dict:
                 current["matrix_values"] = matrix_values if matrix_parsed else None
                 current["matrix_unknown"] = bool(
                     current.pop("_saw_matrix", False)
-                ) and not matrix_parsed
+                ) and (not matrix_parsed or matrix_complex or matrix_axes != 1)
                 jobs.append(current)
             current = {
                 "id": job_match.group(1),
@@ -137,6 +139,8 @@ def parse_workflow(path: Path) -> dict:
             matrix_values = []
             matrix_key = False
             matrix_parsed = False
+            matrix_axes = 0
+            matrix_complex = False
             continue
         if current is None:
             continue
@@ -163,18 +167,26 @@ def parse_workflow(path: Path) -> dict:
             else:
                 inline = _MATRIX_INLINE_RE.match(line)
                 if inline:
+                    matrix_axes += 1
                     values = [v.strip() for v in inline.group(2).split(",")]
+                    if any("${{" in v or "{" in v or ":" in v for v in values):
+                        matrix_complex = True
                     if values:
                         matrix_values.extend(_unquote(v) for v in values)
                         matrix_parsed = True
                     continue
                 key = _MATRIX_KEY_RE.match(line)
                 if key:
+                    matrix_axes += 1
+                    if key.group(1) in {"include", "exclude"}:
+                        matrix_complex = True
                     matrix_key = True
                     matrix_values = []
                     continue
                 item = _MATRIX_ITEM_RE.match(line)
                 if item and matrix_key:
+                    if "${{" in item.group(1) or ":" in item.group(1):
+                        matrix_complex = True
                     matrix_values.append(_unquote(item.group(1)))
                     matrix_parsed = True
                     continue
@@ -183,7 +195,7 @@ def parse_workflow(path: Path) -> dict:
 
     if current is not None:
         current["matrix_values"] = matrix_values if matrix_parsed else None
-        current["matrix_unknown"] = bool(current.pop("_saw_matrix", False)) and not matrix_parsed
+        current["matrix_unknown"] = bool(current.pop("_saw_matrix", False)) and (not matrix_parsed or matrix_complex or matrix_axes != 1)
         jobs.append(current)
 
     return {
@@ -217,7 +229,10 @@ def check_name_set(workflows: list[dict]) -> tuple[set[str], bool]:
     for workflow in workflows:
         for job in workflow["jobs"]:
             label = job["name"] or job["id"]
-            names.add(label)
+            if "${{" in label:
+                unknown_matrix = True
+            if not job.get("matrix_values") and not job.get("matrix_unknown"):
+                names.add(label)
             if job.get("_saw_matrix") or "matrix_unknown" in job:
                 if job.get("matrix_unknown"):
                     unknown_matrix = True
@@ -234,8 +249,6 @@ def check_name_set(workflows: list[dict]) -> tuple[set[str], bool]:
 def assert_required_checks_resolve(
     required: list[str], available: set[str], unknown_matrix: bool
 ) -> list[Finding]:
-    """A required name must match a job label, an expanded matrix name, or a
-    job label that would be expanded (prefix match up to the matrix suffix)."""
     if not required:
         return []
     if unknown_matrix:
@@ -244,16 +257,7 @@ def assert_required_checks_resolve(
     for context in required:
         if context in available:
             continue
-        base = context.rsplit(" (", 1)[0]
-        if base in available and context.endswith(")"):
-            # the job exists but its matrix values could not be enumerated
-            continue
-        findings.append(
-            hard(
-                f"required check '{context}' resolves to no job in "
-                f".github/workflows (branch protection can never be satisfied)"
-            )
-        )
+        findings.append(soft(f"required check '{context}' resolves to no local workflow job; it may be supplied by an external provider"))
     return findings
 
 
@@ -289,7 +293,7 @@ def load_required_checks(workdir: Path, branch: str) -> tuple[list[str] | None, 
             return None, "unavailable", "branch-protection response was not JSON"
         contexts = payload.get("contexts") or []
         return list(contexts), "ok", f"{len(contexts)} required check(s)"
-    if "Branch not protected" in result.stderr or "404" in result.stderr:
+    if "Branch not protected" in result.stderr:
         return [], "inapplicable", "branch is not protected"
     return None, "unavailable", result.stderr.strip().splitlines()[-1] if result.stderr else "gh api failed"
 
@@ -299,7 +303,7 @@ def check_required_checks(workdir: Path, branch: str) -> tuple[list[Finding], li
     notes: list[str] = []
     workflows = parse_workflows(workdir)
     if not workflows:
-        notes.append("no workflow files found; required-check assertion skipped")
+        notes.append("required-check assertion could not run: no workflow files found")
         return findings, notes
     required, kind, detail = load_required_checks(workdir, branch)
     if kind == "inapplicable":
@@ -312,8 +316,13 @@ def check_required_checks(workdir: Path, branch: str) -> tuple[list[Finding], li
         notes.append("required-check assertion not applicable: no required checks")
         return findings, notes
     available, unknown_matrix = check_name_set(workflows)
-    findings.extend(assert_required_checks_resolve(required, available, unknown_matrix))
-    if not findings:
+    if unknown_matrix:
+        notes.append("required-check assertion could not run: matrix cannot be expanded")
+        return findings, notes
+    unmatched = assert_required_checks_resolve(required, available, unknown_matrix)
+    for _, message in unmatched:
+        notes.append(f"required-check assertion could not run: {message}")
+    if not unmatched:
         notes.append(f"all {len(required)} required check(s) resolve to a workflow job")
     return findings, notes
 
@@ -361,17 +370,7 @@ def check_window_vs_cadence(workdir: Path, max_age_days: int) -> tuple[list[Find
     if not workflows:
         notes.append("evidence-window assertion not applicable: no schedule trigger")
         return findings, notes
-    cadences = [cron_cadence_days(w["cron"]) for w in workflows]
-    decided = [c for c in cadences if c is not None]
-    if not decided:
-        notes.append("evidence-window assertion could not run: schedule cadence undecidable")
-        return findings, notes
-    cadence = min(decided)
-    findings.extend(assert_window_exceeds_cadence(max_age_days, cadence))
-    if not findings:
-        notes.append(
-            f"evidence window ({max_age_days} days) exceeds cadence ({cadence} days)"
-        )
+    notes.append("evidence-window assertion could not run: evidence refresh schedule and enforced window cannot be inferred")
     return findings, notes
 
 
@@ -387,18 +386,16 @@ def _excludes_schedule(condition: str | None) -> bool:
     `!= 'schedule'`). An equality against `'schedule'`, or a condition that also
     admits it, does not exclude.
     """
-    if not condition or "event_name" not in condition:
+    if not condition:
         return False
-    compact = condition.replace(" ", "")
-    if _USES_JOB_GATE_RE.search(compact) is None:
+    expression = condition.strip()
+    if expression.startswith("${{") and expression.endswith("}}"):
+        expression = expression[3:-2].strip()
+    match = re.fullmatch(r"github\.event_name\s*(==|!=)\s*(['\"])([a-z_]+)\2", expression)
+    if match is None:
         return False
-    if re.search(r"event_name==['\"]schedule['\"]", compact):
-        return False
-    if re.search(r"event_name==['\"](?!schedule['\"])[a-z_\[\]0-9.]+['\"]", compact):
-        return True
-    if re.search(r"event_name!=['\"]schedule['\"]", compact):
-        return True
-    return False
+    operator, _, event = match.groups()
+    return (operator == "==" and event != "schedule") or (operator == "!=" and event == "schedule")
 
 
 def assert_scheduled_workflow_runs_full_gate(jobs: list[dict]) -> list[Finding]:
@@ -430,7 +427,7 @@ def check_scheduled_gate(workdir: Path) -> tuple[list[Finding], list[str]]:
                 hard(f"{workflow['path'].name}: {message}") for _, message in local
             )
         else:
-            notes.append(f"{workflow['path'].name}: a scheduled job can run the gate")
+            notes.append(f"{workflow['path'].name}: scheduled-gate assertion could not run: runnable jobs do not establish full gate coverage")
     return findings, notes
 
 
@@ -450,6 +447,7 @@ def assert_release_surface(
     tagged_versions: dict[str, str],
     registry_version: str | None,
     registry_reachable: bool,
+    published_versions: list[str] | None = None,
 ) -> tuple[list[Finding], list[str]]:
     """`tagged_versions` maps a `v*` tag to the package version found at it."""
     findings: list[Finding] = []
@@ -472,9 +470,15 @@ def assert_release_surface(
             )
 
     if registry_reachable:
-        if registry_version is None:
-            notes.append("registry has no published version to compare")
+        if not registry_version:
+            notes.append("release-surface assertion could not run: registry returned no latest version")
         else:
+            if published_versions is None:
+                notes.append("release-surface assertion could not run: registry version list unavailable")
+            else:
+                for tag, version in sorted(tagged_versions.items()):
+                    if version not in published_versions:
+                        findings.append(hard(f"tag {tag} exists but version {version} is absent from the registry"))
             if f"v{registry_version}" not in tagged_versions and not any(
                 tag.lstrip("v") == registry_version for tag in tagged_versions
             ):
@@ -552,6 +556,31 @@ def _registry_version(workdir: Path) -> tuple[bool, str | None]:
     return True, value[-1] if value else None
 
 
+def _registry_versions(workdir: Path) -> list[str] | None:
+    try:
+        package = json.loads((workdir / "package.json").read_text(encoding="utf-8"))
+        name = package.get("name")
+    except (OSError, json.JSONDecodeError, AttributeError):
+        return None
+    if not isinstance(name, str) or not name or shutil.which("npm") is None:
+        return None
+    result = subprocess.run(
+        ["npm", "view", name, "versions", "--json"], cwd=workdir,
+        capture_output=True, text=True, check=False,
+    )
+    if result.returncode:
+        return None
+    try:
+        versions = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return None
+    if isinstance(versions, str):
+        return [versions]
+    if isinstance(versions, list) and all(isinstance(v, str) for v in versions):
+        return versions
+    return None
+
+
 def _publish_workflows(workflows: list[dict]) -> list[dict]:
     published = []
     for workflow in workflows:
@@ -590,8 +619,9 @@ def check_release_surface(workdir: Path) -> tuple[list[Finding], list[str]]:
             tagged[tag] = version_at_tag
 
     reachable, registry = _registry_version(workdir)
+    versions = _registry_versions(workdir) if reachable else None
     local, extra = assert_release_surface(
-        package_version, tagged, registry, reachable
+        package_version, tagged, registry, reachable, versions
     )
     findings.extend(local)
     notes.extend(extra)
@@ -662,6 +692,14 @@ def run_self_test() -> int:
         should_fire=False,
     )
 
+    expect(
+        "stale matrix value with base job present",
+        assert_required_checks_resolve(
+            ["test (25.x)"], {"test", "test (24.x)", "test (26.x)"}, False
+        ),
+        should_fire=True,
+    )
+
     # 2 — freshness window shorter than the cadence
     expect(
         "window equals cadence",
@@ -725,6 +763,21 @@ def run_self_test() -> int:
     )
     expect("release surface agrees", agree, should_fire=False)
 
+    _, unpublished_notes = assert_release_surface(
+        "1.5.2", {"v1.5.1": "1.5.1", "v1.5.2": "1.5.2"}, "1.5.1", True
+    )
+    if not any("could not run" in note for note in unpublished_notes):
+        failures.append("tag newer than registry latest must not be reported as verified")
+    missing, _ = assert_release_surface(
+        "1.5.2", {"v1.5.1": "1.5.1", "v1.5.2": "1.5.2"}, "1.5.1", True, ["1.5.1"]
+    )
+    expect("tagged version absent from registry", missing, should_fire=True)
+    published, published_notes = assert_release_surface(
+        "1.5.2", {"v1.5.1": "1.5.1", "v1.5.2": "1.5.2"}, "1.5.1", True, ["1.5.1", "1.5.2"]
+    )
+    if published or published_notes:
+        failures.append("published version need not be registry latest")
+
     # workflow parser: a fixture file must survive parsing
     with tempfile.TemporaryDirectory() as tmp:
         fixture = Path(tmp) / "ci.yml"
@@ -752,11 +805,99 @@ def run_self_test() -> int:
         if not parsed["has_schedule"] or parsed["cron"] != "17 4 * * 1":
             failures.append(f"schedule parse failed: {parsed}")
         names, unknown = check_name_set([parsed])
-        if names != {"lint", "test", "test (24.x)", "test (26.x)"}:
+        if names != {"lint", "test (24.x)", "test (26.x)"}:
             failures.append(f"check-name expansion wrong: {names} unknown={unknown}")
         expected_gate = assert_scheduled_workflow_runs_full_gate(parsed["jobs"])
         if expected_gate:
             failures.append(f"gate assertion misfired on fixture: {expected_gate}")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        repo = root / "repo"
+        repo.mkdir()
+        bindir = root / "bin"
+        bindir.mkdir()
+        workflow_dir = repo / ".github" / "workflows"
+        workflow_dir.mkdir(parents=True)
+        (workflow_dir / "ci.yml").write_text(
+            "jobs:\n  test:\n    name: test\n    strategy:\n      matrix:\n"
+            "        node: ['24.x', '26.x']\n    steps:\n      - run: npm publish\n",
+            encoding="utf-8",
+        )
+        package = repo / "package.json"
+        package.write_text('{"name":"fixture-package","version":"1.5.1"}', encoding="utf-8")
+        env = os.environ.copy()
+        env.update({"PATH": str(bindir) + os.pathsep + env.get("PATH", ""),
+                    "GIT_AUTHOR_NAME": "Fixture", "GIT_AUTHOR_EMAIL": "fixture@example.invalid",
+                    "GIT_COMMITTER_NAME": "Fixture", "GIT_COMMITTER_EMAIL": "fixture@example.invalid"})
+        def git(*args: str) -> None:
+            subprocess.run(["git", "-c", "commit.gpgsign=false", "-c", "tag.gpgSign=false", "-c", "core.hooksPath=/dev/null", *args], cwd=repo, env=env, check=True, capture_output=True)
+        git("init", "-q")
+        git("remote", "add", "origin", "https://github.com/example/fixture.git")
+        git("add", ".")
+        git("commit", "-qm", "fixture")
+        git("tag", "v1.5.1")
+        package.write_text('{"name":"fixture-package","version":"1.5.2"}', encoding="utf-8")
+        git("add", "package.json")
+        git("commit", "-qm", "new version")
+        git("tag", "v1.5.2")
+        gh = bindir / "gh"
+        gh.write_text('#!/bin/sh\nif [ "$GH_FAIL" = 1 ]; then echo "HTTP 403" >&2; exit 1; fi\nprintf \'%s\\n\' "$GH_RESULT"\n', encoding="utf-8")
+        npm = bindir / "npm"
+        npm.write_text('#!/bin/sh\nif [ "$3" = versions ]; then if [ "$NPM_FAIL" = 1 ]; then exit 1; fi; printf \'%s\\n\' "$NPM_RESULT"; else printf \'%s\\n\' "$NPM_LATEST"; fi\n', encoding="utf-8")
+        gh.chmod(0o755)
+        npm.chmod(0o755)
+        cases = [
+            ("stale matrix or external check", '{"contexts":["test (25.x)"]}', '["1.5.1","1.5.2"]', "0", "0", 2, "may be supplied by an external provider"),
+            ("unpublished tag", '{"contexts":["test (24.x)"]}', '["1.5.1"]', "0", "0", 1, "absent from the registry"),
+            ("published non-latest", '{"contexts":["test (24.x)"]}', '["1.5.1","1.5.2"]', "0", "0", 0, "release surface agrees"),
+            ("registry unavailable", '{"contexts":["test (24.x)"]}', "[]", "0", "1", 2, "could not run"),
+            ("protection unavailable", "", '["1.5.1","1.5.2"]', "1", "0", 2, "HTTP 403"),
+        ]
+        for label, gh_data, npm_data, gh_fail, npm_fail, expected, message in cases:
+            case_env = env | {"GH_RESULT": gh_data, "NPM_RESULT": npm_data,
+                              "GH_FAIL": gh_fail, "NPM_FAIL": npm_fail, "NPM_LATEST": "1.5.1"}
+            result = subprocess.run([sys.executable, str(Path(__file__).resolve()), str(repo)],
+                                    env=case_env, capture_output=True, text=True)
+            if result.returncode != expected or message not in result.stdout:
+                failures.append(f"{label}: exit {result.returncode}, output {result.stdout!r}")
+        for label, latest, versions, expected, message in [
+            ("older unpublished tag", "1.5.2", '["1.5.2"]', 1, "tag v1.5.1 exists but version 1.5.1 is absent"),
+            ("empty latest response", "", '["1.5.1","1.5.2"]', 2, "registry returned no latest version"),
+        ]:
+            result = subprocess.run(
+                [sys.executable, str(Path(__file__).resolve()), str(repo)],
+                env=env | {"GH_RESULT": '{"contexts":["test (24.x)"]}',
+                           "NPM_RESULT": versions, "GH_FAIL": "0", "NPM_FAIL": "0", "NPM_LATEST": latest},
+                capture_output=True, text=True,
+            )
+            if result.returncode != expected or message not in result.stdout:
+                failures.append(f"{label}: exit {result.returncode}, output {result.stdout!r}")
+        (workflow_dir / "ci.yml").write_text(
+            "jobs:\n  test:\n    strategy:\n      matrix:\n"
+            "        node: ['24.x', '26.x']\n        os: [ubuntu, windows]\n"
+            "    steps:\n      - run: npm publish\n", encoding="utf-8"
+        )
+        result = subprocess.run(
+            [sys.executable, str(Path(__file__).resolve()), str(repo)],
+            env=env | {"GH_RESULT": '{"contexts":["test (24.x, ubuntu)"]}',
+                       "NPM_RESULT": '["1.5.1","1.5.2"]', "GH_FAIL": "0", "NPM_FAIL": "0", "NPM_LATEST": "1.5.1"},
+            capture_output=True, text=True,
+        )
+        if result.returncode != 2 or "matrix cannot be expanded" not in result.stdout:
+            failures.append(f"unsupported matrix: exit {result.returncode}, output {result.stdout!r}")
+        (workflow_dir / "ci.yml").write_text(
+            "on:\n  schedule:\n    - cron: '0 0 * * 1'\n"
+            "jobs:\n  test:\n    if: ${{ !(github.event_name == 'push') }}\n"
+            "    steps:\n      - run: echo test\n", encoding="utf-8"
+        )
+        result = subprocess.run(
+            [sys.executable, str(Path(__file__).resolve()), str(repo)],
+            env=env | {"GH_RESULT": '{"contexts":["test"]}', "GH_FAIL": "0"},
+            capture_output=True, text=True,
+        )
+        if result.returncode != 2 or "scheduled-gate assertion could not run" not in result.stdout:
+            failures.append(f"negated schedule condition: exit {result.returncode}, output {result.stdout!r}")
 
     if failures:
         for failure in failures:
@@ -797,14 +938,11 @@ def main(argv: list[str] | None = None) -> int:
             hard_count += 1
     if hard_count:
         return 1
-    if not any(note.endswith("could not run") or "could not run" in note for note in notes):
+    if not unavailable:
         print("OK: no gating or release-surface drift detected")
         return 0
-    if unavailable and not any("not applicable" in note for note in notes):
-        print("NOTE: every assertion was unavailable; nothing could be checked")
-        return 2
-    print("OK: no gating or release-surface drift detected")
-    return 0
+    print("NOTE: one or more assertions were unavailable; the check is incomplete")
+    return 2
 
 
 if __name__ == "__main__":

@@ -220,11 +220,10 @@ standard's own release history; it adds no adopter-facing control.
 ### 2.6 migration
 
 Two compatible extensions land together. A repository may adopt a gate check
-(`scripts/gate_check.py`) that reports three drift conditions a pull-request
-review cannot see — a required status check name that resolves to no workflow
-job, an evidence freshness window that does not exceed the schedule cadence, and
-a publish workflow whose package version, git tag, and published registry version
-disagree. The consultation guide gains a route for state-changing git/VCS
+(`scripts/gate_check.py`) that checks selected required-check and release
+disagreements and reports when its inputs or coverage are unavailable. It cannot
+establish full scheduled-gate coverage or infer an evidence refresh policy. The
+consultation guide gains a route for state-changing git/VCS
 actions, branch lifecycle, and the release surface (`vcs-hygiene`, `R-031`,
 `D33`), and incident evidence gains a dated home under
 `docs/research/incident-reports/`, owned by the research record. Neither adds an
