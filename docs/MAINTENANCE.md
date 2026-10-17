@@ -6,6 +6,13 @@ owns maintainer-agent routing.
 
 ## Publish a standard release
 
+Before proposing or performing release work, read this runbook and inspect the
+current `STANDARD.md` version and status, existing local and remote tags, and
+GitHub releases, including drafts and prereleases. Identify any tag without a
+matching published release and report its state before proposing another release.
+If the remote tags or GitHub releases cannot be inspected, report that gap and
+do not assume the version has not already been published.
+
 Choose a release deliberately when a useful, reviewed set of standard changes is
 ready for adopters. There is no release for each commit or calendar interval.
 Collect and review related proposals before implementing them together under one
