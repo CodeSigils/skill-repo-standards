@@ -56,7 +56,13 @@ judges whether a sentence is true.
 `STANDARD.md` describes what adopters implement; this repository's maintainer
 routing is in [`AGENTS.md`](AGENTS.md). [`docs/MAINTENANCE.md`](docs/MAINTENANCE.md)
 owns the repository-only release runbook; it links outward rather than restating
-the standard.
+the standard. [`docs/decisions.md`](docs/decisions.md) is the immutable decision
+log (ADR model): each entry records why a choice was made and is superseded
+rather than rewritten.
+
+Terms used throughout this repository — the normative keywords and the sense of
+*finding* — are defined once in
+[`STANDARD.md` §Normative language](STANDARD.md#normative-language).
 
 ## Use the validator
 

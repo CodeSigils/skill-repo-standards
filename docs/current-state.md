@@ -135,6 +135,12 @@ Last reviewed: 2026-10-17.
   version, tag, and registry artifact disagree), with no adopter-facing `MUST`.
   (checked 2026-10-17)
 
+- The standard's own vocabulary is disambiguated at its point of ownership:
+  `STANDARD.md` §Normative language distinguishes research and validator
+  findings. Recorded as `R-032` and `D34`, and
+  batched under the unpublished 2.6 because it adds no adopter-facing `MUST`.
+  (checked 2026-10-17)
+
 ## What is next
 
 Committed-but-unbuilt work, in the order it is worth doing:

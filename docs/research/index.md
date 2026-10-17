@@ -41,6 +41,7 @@ that the underlying source has not changed since.
 | R-029 | Whether release history needs an explicit one-version-per-commit rule after two migration notes shipped together | Complete | 2026-10-16 | D31 |
 | R-030 | Whether a draft standard needs immutable release artifacts and an event-driven release cadence | Complete | 2026-10-16 | D32 |
 | R-031 | Whether a fleet of related repositories drifts when gating is advisory, and which git/VCS and release-surface hygiene a maintainer standard should require | Complete | 2026-10-17 | D33 |
+| R-032 | Whether the standard's own vocabulary collides, and how a term is disambiguated without rewriting append-only records | Complete | 2026-10-17 | D34 |
 
 ## R-001 — Specification plus validator
 
@@ -658,3 +659,34 @@ https://git-scm.com/docs/git-merge-base ,
 https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication ,
 https://docs.github.com/en/actions/reference/events-that-trigger-workflows ,
 https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
+
+## R-032 — Disambiguating the standard's own vocabulary
+
+**Question and scope.** Whether a shared standard's recurring terms stay
+unambiguous as its records grow, and how a collision is repaired when the
+records that contain it cannot be rewritten. The scope is this standard's own
+vocabulary, not an adopter's.
+
+**Evidence and appraisal.** The standard uses *finding* in two senses: a
+**research finding** (an `R-###` entry, and the "Finding" step of the change
+lifecycle) and a **validator finding** (the hard or soft result a check reports,
+as graded in `D12` and `R-009`). Both are first-class, and a reader who meets an
+unqualified "finding" cannot tell which is meant. Fitness-function practice
+keeps a validator result visible rather than silencing it, and provenance
+guidance keeps an open gap reported; both presuppose that a reader can tell a
+reported result from a recorded finding. The collision was found while recording
+the standard's own evidence incident (`R-031`), where the new checks report
+findings while the register records findings.
+
+**Finding.** The ambiguity is objective and cheap to repair at the point of
+ownership: distinguish the two uses where the standard defines its terms. A
+global rename would entail broader changes while historical records retain their
+original wording; the clarification leaves those records intact.
+
+**Limitations and recheck.** A single-repository observation about one word; a
+per-term repair is not a vocabulary regime, and none is adopted. Recheck when a
+second term is observed to collide, or when a reader still cannot resolve
+"finding" from its context.
+
+Sources: https://continuous-architecture.org/practices/fitness-functions ,
+https://docs.thally.io/guides/provenance

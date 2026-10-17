@@ -31,6 +31,9 @@ Only this document is normative. `README.md`, `AGENTS.md`, `docs/decisions.md`,
 `docs/current-state.md`, and the research record are informative; where one of
 them states a rule it links to the owning section here instead of defining it.
 
+In this standard, a **research finding** records a research result, while a
+**validator finding** is a result reported by a check.
+
 ## Conformance grades
 
 Conformance is **additive** and **self-asserted**. A repository claims a grade;
@@ -227,6 +230,9 @@ actions, branch lifecycle, and the release surface (`vcs-hygiene`, `R-031`,
 `docs/research/incident-reports/`, owned by the research record. Neither adds an
 adopter-facing `MUST`: no conforming repository becomes non-conforming, so no
 record changes and no `MUST` moves.
+
+The same draft clarifies the two senses of *finding* in §Normative language
+(`R-032`, `D34`). This adds no adopter-facing `MUST`.
 
 ## Change lifecycle
 

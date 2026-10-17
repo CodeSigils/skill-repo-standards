@@ -646,3 +646,25 @@ and not for a mandate to schedule a second job in every repository. The change i
 therefore a compatible extension: it adds a check and a consultation route with
 no new `MUST` on adopting repositories, so no conforming repository becomes
 non-conforming and the version bump is minor.
+
+## Decision: Disambiguate a term at its point of ownership
+
+- ID: D34
+- Status: accepted
+- Decided: 2026-10-17
+- Sources: https://continuous-architecture.org/practices/fitness-functions , https://docs.thally.io/guides/provenance
+- Recheck: when a second term is observed to collide, or a reader still cannot resolve "finding" from context
+- Context: The standard uses *finding* for two distinct things — a research finding (an `R-###` entry and the change lifecycle's Finding step) and a validator finding (the hard or soft result a check reports, graded in D12 and R-009). A reader meeting the unqualified word cannot tell which is meant.
+- Evidence appraisal: Fitness-function practice keeps a validator result visible rather than silencing it, and provenance guidance keeps an open gap reported; both presuppose that a reader can distinguish a reported result from a recorded finding. The collision was observed while recording a first-party incident (`R-031`), where the new checks report findings while the register records findings. The repair is a definition at the point of ownership, not a rename, because the register is append-only and the decision log immutable.
+- Outcome check: `STANDARD.md` §Normative language distinguishes research findings from validator findings while preserving historical wording.
+- Evidence profile: constrained
+- Primary-source exception: the evidence is a first-party observation of this standard's own records — the "finding" collision surfaced while writing `R-031` — supported by community practice; no registered official source addresses term disambiguation in a maintainer standard, and citing a tangential official document to claim `primary` would overstate it.
+
+Rationale: The collision is objective and cheap to repair where the standard
+defines its terms, so it is fixed there rather than by a rename. A global rename
+is refused on the record: the research register is append-only and the decision
+log immutable, so the old entries would keep the old word and both terms would
+live at once, which adds a collision instead of removing one. Defining the term
+once in `STANDARD.md` §Normative language gives readers a common reference and
+changes no requirement and no version, so it is batched under the still-
+unpublished 2.6 rather than cut as a separate release.
