@@ -48,7 +48,7 @@ judges whether a sentence is true.
   actually exists.
 - **The validator** — [`scripts/standards_check.py`](scripts/standards_check.py).
   It checks every machine-checkable rule listed under
-  [`STANDARD.md` §The reference validator](STANDARD.md). It detects drift; it
+  [`STANDARD.md` §The reference validator](STANDARD.md#the-reference-validator). It detects drift; it
   never judges prose.
 
 ## Maintaining this repository
@@ -232,7 +232,8 @@ python3 scripts/verify_urls.py --self-test
 ```
 
 `python3 scripts/gate_check.py` is an optional, environment-dependent check.
-It returns 2 when it cannot establish an assertion, including when repository
+It returns 1 for a hard finding, even if another assertion could not run; otherwise
+it returns 2 when it cannot establish an assertion, including when repository
 protection or release data is unavailable. Required-check matching is limited to
 workflow job names and literal single-axis matrices; other matrices are reported
 as unavailable. An unmatched name is also unavailable because an external
