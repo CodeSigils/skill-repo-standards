@@ -6,6 +6,15 @@ owns maintainer-agent routing.
 
 ## Publish a standard release
 
+Choose a release deliberately when a useful, reviewed set of standard changes is
+ready for adopters. There is no release for each commit or calendar interval.
+Collect and review related proposals before implementing them together under one
+version; do not merge changed normative requirements under an already published
+version. Apply the compatibility and version rules in
+[`STANDARD.md`](../STANDARD.md#standard-lifecycle) to the complete batch.
+Routine commits, pushes, and maintenance changes do not themselves authorize a
+version bump, tag, or release.
+
 Publish one release for each normative `STANDARD.md` version or status change.
 Target a verified commit that contains that version; do not create a release tag
 solely for ordinary CI, agent-guidance, README, current-state, or other
@@ -23,7 +32,12 @@ repository-maintenance changes.
    the release as a prerelease; do not present it as the latest stable release.
    The release notes link the version's migration section, `CONFORMANCE.md`, and
    the linked decision record.
-6. Do not move, delete, or retroactively create published release tags. A later
+6. Verify that the remote tag points to the intended commit and the GitHub
+   release is published with the correct prerelease status and notes. If tagging
+   succeeds but publication or verification fails, report the release as
+   incomplete and its exact state; resolve it using the existing tag rather than
+   creating another tag for the same version.
+7. Do not move, delete, or retroactively create published release tags. A later
    standard version receives its own tag and release.
 
 The release cadence is event-driven: one release for each normative standard

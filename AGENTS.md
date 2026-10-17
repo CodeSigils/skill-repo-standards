@@ -111,6 +111,9 @@ on merge. Reference an issue with `Refs` instead.
 
 For standard-release versioning, follow the rule in
 [`STANDARD.md`'s change lifecycle](STANDARD.md#change-lifecycle).
+For release decisions and publication, follow the
+[release runbook](docs/MAINTENANCE.md#publish-a-standard-release); a request to
+commit or push alone is not a request to publish a release.
 
 ## Verification before claiming completion
 
