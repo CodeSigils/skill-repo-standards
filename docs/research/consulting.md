@@ -56,6 +56,7 @@ policy catalogue.
 | Runtime compatibility claims and distributed-skill trust | `skill-runtime-trust` | R-022 and D25 | a skill adds executable support, a platform-specific adapter, or a named-runtime claim |
 | Specification lifecycle, governance, and licensing | `specification-lifecycle`, `specification-governance`, `licensing` | R-005, R-006, R-008, D6, D7, D9, D10, and D11 | publication, a version/status transition, or licence scope changes |
 | Maintainer memory services and external research aids | `agent-memory` | R-003, R-004, and D3 | repeated research defeats the local records, or a hosted service is proposed |
+| State-changing git/VCS actions, branch lifecycle, and the release surface | `vcs-hygiene` | R-031 and D33 | GitHub changes branch-protection or merge semantics, or the gate check blocks a repository that conforms |
 
 Use the concern map to locate sources, not to apply a generic policy. The target
 repository owns the decision and may have a narrower scope.

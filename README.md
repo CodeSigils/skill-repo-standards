@@ -201,11 +201,14 @@ material multi-option choice only, use the optional Grade C
 │   └── research
 │       ├── consulting.md
 │       ├── evidence-appraisal.md
+│       ├── incident-reports
+│       │   └── 2026-10-17-fleet-ci-rot-and-agent-drift.md
 │       ├── index.md
 │       └── trade-study.md
 └── scripts
     ├── check_commit_messages.py
     ├── check_conformance.py
+    ├── gate_check.py
     ├── standards_check.py
     └── verify_urls.py
 ```
@@ -218,6 +221,8 @@ python3 scripts/standards_check.py --self-test
 python3 scripts/check_commit_messages.py --self-test
 python3 scripts/check_conformance.py
 python3 scripts/check_conformance.py --self-test
+python3 scripts/gate_check.py
+python3 scripts/gate_check.py --self-test
 python3 scripts/verify_urls.py --self-test
 ```
 

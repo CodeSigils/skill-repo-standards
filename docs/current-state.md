@@ -4,7 +4,7 @@ This document is **mutable**: it owns what is true *now*. Every claim carries a
 check date. It is the opposite of `docs/research/index.md`, which is append-only
 and never retro-edited.
 
-Last reviewed: 2026-10-16.
+Last reviewed: 2026-10-17.
 
 ## What this repository is
 
@@ -123,6 +123,17 @@ Last reviewed: 2026-10-16.
   released version. The historical 2.3 migration remains in place but states
   that it shipped with 2.4, preserving an honest record without rewriting shared
   history. (checked 2026-10-16)
+- First-party incident evidence lives under
+  `docs/research/incident-reports/`, owned by the append-only research record as
+  an input to an `R-###` entry rather than a second source of truth. The fleet
+  CI-rot incident is `R-031`, its decision is `D33`, and that decision registers
+  a `vcs-hygiene` concern route covering state-changing git/VCS actions, branch
+  lifecycle, and the release surface. The change adds a compatible extension:
+  `scripts/gate_check.py` reports three drift conditions a pull-request review
+  cannot see (a required check name that resolves to no workflow job, an evidence
+  window that does not exceed the schedule cadence, and a publish workflow whose
+  version, tag, and registry artifact disagree), with no adopter-facing `MUST`.
+  (checked 2026-10-17)
 
 ## What is next
 

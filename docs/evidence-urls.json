@@ -1,5 +1,5 @@
 {
-  "version": 9,
+  "version": 10,
   "description": "Machine-readable evidence index. Every source cited by a decision is registered here with a verification date. scripts/verify_urls.py checks each entry's HTTP status and required text; scripts/standards_check.py requires that every decision source is registered.",
   "urls": [
     {
@@ -460,6 +460,94 @@
       "source_type": "official_docs",
       "status": "active",
       "last_verified": "2026-10-16"
+    },
+    {
+      "name": "git-status",
+      "url": "https://git-scm.com/docs/git-status",
+      "expected_statuses": [200],
+      "required_text": ["git-status"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "vcs-hygiene",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "name": "git-branch",
+      "url": "https://git-scm.com/docs/git-branch",
+      "expected_statuses": [200],
+      "required_text": ["git-branch"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "vcs-hygiene",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "name": "git-log",
+      "url": "https://git-scm.com/docs/git-log",
+      "expected_statuses": [200],
+      "required_text": ["git-log"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "vcs-hygiene",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "name": "git-fetch",
+      "url": "https://git-scm.com/docs/git-fetch",
+      "expected_statuses": [200],
+      "required_text": ["git-fetch"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "vcs-hygiene",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "name": "git-merge-base",
+      "url": "https://git-scm.com/docs/git-merge-base",
+      "expected_statuses": [200],
+      "required_text": ["git-merge-base"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "vcs-hygiene",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "name": "GitHub Actions automatic token authentication",
+      "url": "https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication",
+      "expected_statuses": [200],
+      "required_text": ["GITHUB_TOKEN"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "vcs-hygiene",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "name": "GitHub Events that trigger workflows",
+      "url": "https://docs.github.com/en/actions/reference/events-that-trigger-workflows",
+      "expected_statuses": [200],
+      "required_text": ["Events that trigger workflows"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "vcs-hygiene",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-17"
+    },
+    {
+      "name": "GitHub About protected branches",
+      "url": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches",
+      "expected_statuses": [200],
+      "required_text": ["protected branch"],
+      "source_section": "docs/decisions.md",
+      "domain_tag": "vcs-hygiene",
+      "source_type": "official_docs",
+      "status": "active",
+      "last_verified": "2026-10-17"
     }
   ]
 }

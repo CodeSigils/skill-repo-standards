@@ -40,6 +40,7 @@ that the underlying source has not changed since.
 | R-028 | Whether the corpus's coverage promise needs a computed check once a prose-visible omission is known to have failed elsewhere | Complete | 2026-10-16 | D30 |
 | R-029 | Whether release history needs an explicit one-version-per-commit rule after two migration notes shipped together | Complete | 2026-10-16 | D31 |
 | R-030 | Whether a draft standard needs immutable release artifacts and an event-driven release cadence | Complete | 2026-10-16 | D32 |
+| R-031 | Whether a fleet of related repositories drifts when gating is advisory, and which git/VCS and release-surface hygiene a maintainer standard should require | Complete | 2026-10-17 | D33 |
 
 ## R-001 — Specification plus validator
 
@@ -594,3 +595,66 @@ invent a release date and publication decision that did not occur.
 
 Sources: https://git-scm.com/docs/git-tag ,
 https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
+
+## R-031 — Fleet CI rot and state-changing git/VCS hygiene
+
+**Question and scope.** Which recurring failures appear when a group of related
+repositories gate on advisory checks rather than a conformance claim, and which
+git/VCS and release-surface controls a maintainer standard can require without a
+universal `MUST` that no failure justifies. The scope covers the default-branch
+gate, branch lifecycle, and the release surface (package version, git tag, and
+published registry artifact). It does not prescribe a hosting provider or a
+specific CI vendor.
+
+**Evidence and appraisal.** A first-party incident across four sibling
+repositories on one date. The findings were: an expired evidence check alongside
+merges performed with the default `GITHUB_TOKEN`, which do not trigger a workflow
+run, so the default branch rotted while every visible pull request looked green;
+a deleted upstream repository turning a soft link into a definite `404` that
+failed a non-waivable hard check; an evidence-freshness window shorter than the
+scheduled job's cadence, so the gate went red periodically with no code change; a
+required status check name that matched no job in the workflow matrix, so every
+pull request was blocked by a check that could never report; a duplicated lineage
+whose trees were byte-identical, making a reset safe but making a naive
+"diverged, therefore unsafe" reading permanently stuck; and a release surface
+where the published package version and the source's declared version disagreed
+with nothing reconciling them. The full narrative, including the behavioural
+failures and the options considered, is recorded in
+`docs/research/incident-reports/2026-10-17-fleet-ci-rot-and-agent-drift.md`.
+
+Git documents `status`, `branch`, `log`, `fetch`, and `merge-base` as the
+read-only facts a merge or delete decision rests on. GitHub documents branch
+protection — which verifies a pull request rather than the default branch over
+time — and the token-originated event that does not start a workflow run. Those
+sources establish the objective facts locally, so the gaps are checkable rather
+than a matter of judgment.
+
+**Finding.** Three gaps are machine-observable and belong in a gating check: a
+required check name that resolves to no job in any workflow; an evidence
+freshness window that does not exceed the schedule cadence; and a publish
+workflow whose package version, git tag, and registry version disagree. Two
+further obligations are not machine-checkable and therefore stay advisory: a
+state-changing git action should first read the target repository's own document
+chain and the read-only git facts (working-tree status, all branches with their
+tips, pruned fetch, recent history, and an ancestry or tree comparison), and a
+scheduled job should be able to run the full gate on the default branch regardless
+of how a commit arrived. The advisory half is what the incident shows a purely
+advisory standard cannot compel; it is recorded here as evidence, not adopted as
+a universal control.
+
+**Limitations and recheck.** This is a single-fleet, first-party observation, not
+a survey. The checks detect declared drift — a name that resolves to nothing, a
+window shorter than a cadence, a version that disagrees with its artifact — and
+cannot judge intent or whether a repository deliberately diverges. Recheck when
+GitHub changes branch-protection or merge semantics, when the check blocks a
+conforming repository, or when a second fleet-wide incident exposes a failure
+mode these assertions do not reach.
+
+Sources: https://git-scm.com/docs/git-status ,
+https://git-scm.com/docs/git-branch ,
+https://git-scm.com/docs/git-log ,
+https://git-scm.com/docs/git-fetch ,
+https://git-scm.com/docs/git-merge-base ,
+https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication ,
+https://docs.github.com/en/actions/reference/events-that-trigger-workflows ,
+https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches

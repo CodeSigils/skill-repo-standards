@@ -1,6 +1,6 @@
 # Skill Repository Standard
 
-**Version 2.5 (draft).** This document is the single normative source for the
+**Version 2.6 (draft).** This document is the single normative source for the
 shared quality floor described here. It is not project authority for any other
 repository; read that repository directly.
 
@@ -213,6 +213,20 @@ migration heading for an unpublished intermediate version: split independently
 reviewable changes into sequential versioned commits, or describe a deliberately
 batched change under its one released version. This clarification governs this
 standard's own release history; it adds no adopter-facing control.
+
+### 2.6 migration
+
+Two compatible extensions land together. A repository may adopt a gate check
+(`scripts/gate_check.py`) that reports three drift conditions a pull-request
+review cannot see — a required status check name that resolves to no workflow
+job, an evidence freshness window that does not exceed the schedule cadence, and
+a publish workflow whose package version, git tag, and published registry version
+disagree. The consultation guide gains a route for state-changing git/VCS
+actions, branch lifecycle, and the release surface (`vcs-hygiene`, `R-031`,
+`D33`), and incident evidence gains a dated home under
+`docs/research/incident-reports/`, owned by the research record. Neither adds an
+adopter-facing `MUST`: no conforming repository becomes non-conforming, so no
+record changes and no `MUST` moves.
 
 ## Change lifecycle
 

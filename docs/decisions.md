@@ -620,3 +620,29 @@ that boundary; a calendar cadence would create releases with no corresponding
 adoption decision. `docs/MAINTENANCE.md` owns the operational runbook, while
 `STANDARD.md` continues to own compatibility and version meaning. Existing
 history is left untagged to avoid inventing releases after the fact.
+
+## Decision: Gate state-changing git and release actions
+
+- ID: D33
+- Status: accepted
+- Decided: 2026-10-17
+- Sources: https://git-scm.com/docs/git-status , https://git-scm.com/docs/git-branch , https://git-scm.com/docs/git-log , https://git-scm.com/docs/git-fetch , https://git-scm.com/docs/git-merge-base , https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication , https://docs.github.com/en/actions/reference/events-that-trigger-workflows , https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
+- Recheck: when GitHub changes branch-protection or merge semantics, or when the check blocks a repository that conforms to the standard
+- Context: Each repository's gate is advisory, and nothing reconciled a required status check name against the jobs that actually exist, an evidence freshness window against the schedule cadence, or a publish workflow's package version against its git tag and published registry artifact. The first incident found all three while every visible pull request read green.
+- Evidence appraisal: The finding rests on a first-party, single-fleet incident (R-031), recorded in `docs/research/incident-reports/2026-10-17-fleet-ci-rot-and-agent-drift.md`. Git and GitHub document the underlying facts as first-party official documentation — `status`, `branch`, `log`, `fetch`, and `merge-base` as the read-only evidence a merge or delete decision rests on; branch protection as a pull-request check rather than a default-branch-over-time check; and the token-originated event that does not start a workflow run. Because those facts are objective and locally readable, the three gaps are machine-checkable without a mechanical judgment about intent.
+- Outcome check: `scripts/gate_check.py` reports a hard finding for each of the three assertions — a required check name that resolves to no workflow job, an evidence window that does not exceed the schedule cadence, and a publish workflow whose version, tag, and registry version disagree — and a state-changing git action reads the target repository's document chain and the read-only git facts first.
+- Evidence profile: primary
+
+Rationale: The incident showed that advisory gates fail in ways no pull request
+review surfaces: a required check whose name no job can ever satisfy, a freshness
+window shorter than the cadence that feeds it, and a release surface whose three
+sides were never reconciled. All three are objective repository facts, so they
+belong in a check rather than in prose that a reader may or may not follow. The
+read-only git pre-flight and the scheduled full-gate job are deliberately left
+advisory: the standard has no evidence that a universal `MUST` would improve this
+repository class, and the proportionality rule forbids adopting a control before
+its failure mode is observed — the failure is observed for the three assertions,
+and not for a mandate to schedule a second job in every repository. The change is
+therefore a compatible extension: it adds a check and a consultation route with
+no new `MUST` on adopting repositories, so no conforming repository becomes
+non-conforming and the version bump is minor.
